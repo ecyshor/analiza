@@ -1,10 +1,12 @@
 let
-  sources = import ./sources.nix;
+  sources = import ./nix/sources.nix;
   pkgs = import sources.nixpkgs {};
+  nodepackages = pkgs.nodePackages;
 in
 pkgs.mkShell {
   buildInputs = [
-    nodejs
-    nodepackages.uglifyjs
+    pkgs.nodejs
+    nodepackages.uglify-js
+    pkgs.go
   ];
 }
