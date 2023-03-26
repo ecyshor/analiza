@@ -8,5 +8,6 @@ pkgs.mkShell {
     pkgs.nodejs
     nodepackages.uglify-js
     pkgs.go
+    pkgs.postgresql
   ];
 }

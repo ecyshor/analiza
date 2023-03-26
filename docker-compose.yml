@@ -1,0 +1,76 @@
+version: '3'
+services:
+  clickhouse:
+    image: docker.io/bitnami/clickhouse:23
+    environment:
+      - CLICKHOUSE_ADMIN_USER=eye_admin
+      - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    volumes:
+      - clickhouse_data:/bitnami/clickhouse
+      - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
+
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+  metabase:
+    image: 'metabase-clickhouse'
+    container_name: 'metabase_clickhouse'
+    ports:
+      - '3002:3000'
+    environment:
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=metabase
+      - MB_DB_PORT=5432
+      - MB_DB_USER=metabase
+      - MB_DB_PASS=metabase_super_password
+      - MB_DB_HOST=postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+        reservations:
+          cpus: '0.01'
+          memory: 200M
+  postgrest:
+    image: postgrest/postgrest
+    ports:
+      - "3001:3000"
+    command:
+      - "postgrest"
+      - "/config/postgrest.conf"
+    depends_on:
+      - postgres
+    volumes:
+      - ./postgrest:/config
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    environment:
+      API_URL: http://localhost:3001/
+  postgres:
+    image: postgres:15.2
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: super_secret_password
+    command: ["postgres", "-c", "log_statement=all"]
+    volumes:
+      - "./postgres/init:/docker-entrypoint-initdb.d/"
+      - "./postgres/pgdata:/var/lib/postgresql/data"
+
+volumes:
+  clickhouse_data:
+    driver: local
+

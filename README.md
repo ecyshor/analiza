@@ -1,3 +1,3 @@
 # clearycs
 
-Simple analytics for websites
+Simple analytics for website
