@@ -1,3 +1,3 @@
-# clearycs
+# analiza.dev
 
 Simple analytics for website
