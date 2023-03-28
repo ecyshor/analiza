@@ -67,13 +67,14 @@ type Server struct {
 }
 
 func main() {
+	config := ReadConfig()
 	// Create the ClickHouse connection pool with the given options
 	conn, err := clickhouse.Open(&clickhouse.Options{
-		Addr: []string{"127.0.0.1:9000"},
+		Addr: []string{fmt.Sprintf("%s:9000", config.clickhouse.host)},
 		Auth: clickhouse.Auth{
-			Database: "eye",
-			Username: "eye",
-			Password: "eye_super_password",
+			Database: config.clickhouse.database,
+			Username: config.clickhouse.user,
+			Password: config.clickhouse.password,
 		},
 		Settings: clickhouse.Settings{
 			"max_execution_time": 60,
@@ -115,7 +116,8 @@ func main() {
 	// Create a channel to queue the rows for batch inserts
 
 	// Start a goroutine to batch insert the queued rows
-	checker, err := NewDbDomainChecker("postgres://eye:super_secret_password@localhost:5432/eye_admin")
+	checker, err := NewDbDomainChecker(fmt.Sprintf("postgres://%s:%s@%s:5432/%s",
+		config.postgres.user, config.postgres.password, config.postgres.host, config.postgres.database))
 	if err != nil {
 		log.Printf("Failed to start the domain checker %s", err)
 		panic(err)
