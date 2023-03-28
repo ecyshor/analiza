@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"net/http"
 	"net/url"
@@ -40,9 +41,12 @@ const (
 type UserEvent struct {
 	EventType UserEventType `json:"type"`
 	Path      string        `json:"path"`
+	Tenant    uuid.UUID     `json:"tenant"`
 }
 
 type Event struct {
+	Tenant         uuid.UUID     `json:"tenant_id"`
+	Domain         string        `json:"domain"`
 	UserIdentifier string        `json:"user_id"`
 	EventType      UserEventType `json:"type"`
 	Referral       string        `json:"referral"`
@@ -53,7 +57,6 @@ type Event struct {
 	UtmContent     string        `json:"utm_content"`
 	UserAgent      string        `json:"user_agent"`
 	InsertTime     time.Time     `json:"insert_time"`
-	Domain         string        `json:"domain"`
 	Path           string        `json:"path"`
 }
 
@@ -112,7 +115,12 @@ func main() {
 	// Create a channel to queue the rows for batch inserts
 
 	// Start a goroutine to batch insert the queued rows
-	go server.batchInsertRows(eventChannel)
+	checker, err := NewDbDomainChecker("postgres://eye:super_secret_password@localhost:5432/eye_admin")
+	if err != nil {
+		log.Printf("Failed to start the domain checker %s", err)
+		panic(err)
+	}
+	go server.batchInsertRows(eventChannel, checker)
 	http.HandleFunc("/eye", server.handleEye)
 
 	// Start the HTTP server
@@ -132,6 +140,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	var event Event
 	event.Domain = request.Header.Get("Origin")
 
+	event.Tenant = userEvent.Tenant
 	event.EventType = userEvent.EventType
 	// Get the referral, utm, and source query params from the HTTP request
 
@@ -169,17 +178,22 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	_, _ = w.Write([]byte("OK"))
 }
 
-func (s *Server) batchInsertRows(rowChan <-chan Event) {
+func (s *Server) batchInsertRows(eventChan <-chan Event, checker *DomainChecker) {
 	var rows []Event
 
 	for {
 		select {
-		case row := <-rowChan:
-			rows = append(rows, row)
-
-			if len(rows) == 100 {
-				insertRows(s.conn, rows)
-				rows = nil
+		case event := <-eventChan:
+			tenant, err := checker.CheckDomainForTenant(context.Background(), event.Tenant.String(), event.Domain)
+			if err != nil {
+				log.Printf("Failed to check domain %s", err)
+				if tenant {
+					rows = append(rows, event)
+					if len(rows) == 100 {
+						insertRows(s.conn, rows)
+						rows = nil
+					}
+				}
 			}
 
 		case <-time.After(time.Second):
@@ -196,7 +210,7 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	batch, err := conn.PrepareBatch(ctx, "INSERT INTO events (domain, user_id, type, referral, utm_source, utm_medium, utm_campaign, utm_term, utm_content, user_agent, insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	batch, err := conn.PrepareBatch(ctx, "INSERT INTO events (tenant_id, domain, user_id, type, referral, utm_source, utm_medium, utm_campaign, utm_term, utm_content, user_agent, insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Printf("Error getting ClickHouse batch: %s", err)
 	}
@@ -226,16 +240,17 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 }
 
 func initTables(c clickhouse.Conn) {
-	//dropTable := `DROP TABLE IF EXISTS events`
-	//err := c.Exec(context.Background(), dropTable)
-	//if err != nil {
-	//	log.Printf("Failed to drop table %s", err)
-	//	panic(err)
-	//} else {
-	//	log.Println("Clickhouse schema dropped")
-	//}
+	dropTable := `DROP TABLE IF EXISTS events`
+	err := c.Exec(context.Background(), dropTable)
+	if err != nil {
+		log.Printf("Failed to drop table %s", err)
+		panic(err)
+	} else {
+		log.Println("Clickhouse schema dropped")
+	}
 	createTable := `
 		CREATE TABLE IF NOT EXISTS events (
+		    tenant_id UUID,
 		    domain String,
 			user_id String,
 			type Enum8('view' = 1, 'gone' = 2),
@@ -249,9 +264,9 @@ func initTables(c clickhouse.Conn) {
 			insert_time DateTime,
 			path String
 		) ENGINE = MergeTree
-		ORDER BY (domain, insert_time);
+		ORDER BY (tenant_id, domain, insert_time);
 	`
-	err := c.Exec(context.Background(), createTable)
+	err = c.Exec(context.Background(), createTable)
 	if err != nil {
 		log.Printf("Failed to create table %s", err)
 		panic(err)

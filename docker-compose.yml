@@ -49,13 +49,20 @@ services:
       - "postgrest"
       - "/config/postgrest.conf"
     depends_on:
-      - postgres
+      - postgres_flyway
     volumes:
       - ./postgrest:/config
+  postgres_flyway:
+    image: flyway/flyway
+    command: -url=postgres://postgrest:super_secret_password@postgres:5432/eye_admin -user=postgres -password=super_secret_password -connectRetries=60 migrate
+    volumes:
+      - postgrest/schema:/flyway/sql
+    depends_on:
+      - postgres
   swagger:
     image: swaggerapi/swagger-ui
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       API_URL: http://localhost:3001/
   postgres:
@@ -69,6 +76,13 @@ services:
     volumes:
       - "./postgres/init:/docker-entrypoint-initdb.d/"
       - "./postgres/pgdata:/var/lib/postgresql/data"
+  eye_flyway:
+    image: flyway/flyway
+    command: -url=postgres://postgrest:super_secret_password@postgres:5432/postgres -user=postgres -password=super_secret_password -connectRetries=60 migrate
+    volumes:
+      - eye/postgres/schema:/flyway/sql
+    depends_on:
+      - postgres
 
 volumes:
   clickhouse_data:
