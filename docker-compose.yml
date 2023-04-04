@@ -98,7 +98,9 @@ services:
       postgrest_flyway:
         condition: service_completed_successfully
     volumes:
-      - ./postgrest:/config
+      - type: bind
+        source: $ANALIZA_POSTGREST_CONFIG
+        target: /config/postgrest.conf
     deploy:
       restart_policy:
         condition: on-failure
