@@ -1,4 +1,3 @@
-version: '3'
 services:
   eye:
     build:
@@ -6,13 +5,22 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - eye_flyway
-      - clickhouse
+      clickhouse:
+        condition: service_healthy
+      eye_flyway:
+        condition: service_completed_successfully
     environment:
       - CLICKHOUSE_HOST=clickhouse
       - POSTGRES_HOST=postgres
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
   clickhouse:
-    image: docker.io/bitnami/clickhouse:23
+    image: docker.io/bitnami/clickhouse:23.3.1
+#    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
     environment:
       - CLICKHOUSE_ADMIN_USER=eye_admin
       - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
@@ -20,21 +28,34 @@ services:
       - '8123:8123'
       - '9000:9000'
     volumes:
-      - clickhouse_data:/bitnami/clickhouse
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
-
+      - type: bind
+        source: ${ANALIZA_DATA_DIR:-/data/analiza}/clickhouse/data
+        target: /bitnami/clickhouse
     ulimits:
       nofile:
         soft: 262144
         hard: 262144
+    healthcheck:
+      # "clickhouse", "client", "-u ${CLICKHOUSE_USER}", "--password ${CLICKHOUSE_PASSWORD}", "-q 'SELECT 1'"
+      test: [ "CMD", "wget", "--spider", "-q", "localhost:8123/ping" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
       resources:
         limits:
-          cpus: '2'
-          memory: 2G
+          cpus: '4'
+          memory: 8G
   metabase:
     image: 'metabase-clickhouse'
-    container_name: 'metabase_clickhouse'
+    build: metabase
+    container_name: 'metabase'
     ports:
       - '3002:3000'
     environment:
@@ -44,7 +65,17 @@ services:
       - MB_DB_USER=metabase
       - MB_DB_PASS=metabase_super_password
       - MB_DB_HOST=postgres
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
       resources:
         limits:
           cpus: '0.5'
@@ -60,30 +91,56 @@ services:
       - "postgrest"
       - "/config/postgrest.conf"
     depends_on:
-      - postgrest_flyway
+      postgrest_flyway:
+        condition: service_completed_successfully
     volumes:
       - ./postgrest:/config
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
   postgrest_flyway:
     image: flyway/flyway
     command: -url=jdbc:postgresql://postgres:5432/eye_admin -user=postgres -password=super_secret_password -connectRetries=60 migrate
     volumes:
       - ./postgrest/schema:/flyway/sql
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
   swagger:
     image: swaggerapi/swagger-ui
     ports:
       - "8081:8080"
     environment:
       API_URL: http://localhost:3001/
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
   eye_flyway:
     image: flyway/flyway
     command: -url=jdbc:postgresql://postgres:5432/eye_admin -defaultSchema=eye -user=postgres -password=super_secret_password -connectRetries=60 migrate
     volumes:
       - ./eye/postgres/schema:/flyway/sql
     depends_on:
-      - postgres
-      - postgrest_flyway
+      postgres:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
   postgres:
     image: bitnami/postgresql:15.2.0
     ports:
@@ -93,10 +150,19 @@ services:
       POSTGRES_PASSWORD: super_secret_password
       POSTGRES_DATABASE: postgres
     volumes:
-      - "./postgres/init:/docker-entrypoint-initdb.d/"
-      - "./postgres/data:/bitnami/postgres"
-
-volumes:
-  clickhouse_data:
-    driver: local
+      - ./postgres/init:/docker-entrypoint-initdb.d/
+      - type: bind
+        source: ${ANALIZA_DATA_DIR:-/data/analiza}/postgres/data
+        target: /bitnami/postgresql
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
