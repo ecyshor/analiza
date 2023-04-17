@@ -2,7 +2,7 @@
     "use strict";
 
     const scriptEl = document.currentScript;
-    const endpoint = scriptEl.getAttribute("hostname") || "http://localhost:8080";
+    const endpoint = scriptEl.getAttribute("hostname") || "https://api.analiza.dev";
     const tenant = scriptEl.getAttribute("tenant");
 
     function view() {

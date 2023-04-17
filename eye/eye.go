@@ -124,12 +124,18 @@ func main() {
 	}
 	go server.batchInsertRows(eventChannel, checker)
 	http.HandleFunc("/eye", server.handleEye)
+	http.HandleFunc("/health", server.health)
 
 	// Start the HTTP server
 	log.Println("Starting HTTP server on port 8080...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
+}
+
+func (s *Server) health(w http.ResponseWriter, request *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("OK"))
 }
 
 func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
