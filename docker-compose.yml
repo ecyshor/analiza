@@ -1,4 +1,19 @@
 services:
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
   eye:
     build:
       context: ./eye
@@ -18,6 +33,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`api.analiza.dev`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
   clickhouse:
     image: docker.io/bitnami/clickhouse:23.3.1
 #    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
@@ -107,6 +126,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`admin.analiza.dev`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
   postgrest_flyway:
     image: flyway/flyway
     command: -url=jdbc:postgresql://postgres:5432/eye_admin -user=postgres -password=super_secret_password -connectRetries=60 migrate
