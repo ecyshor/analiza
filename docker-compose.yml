@@ -17,8 +17,6 @@ services:
   eye:
     build:
       context: ./eye
-    ports:
-      - "8080:8080"
     depends_on:
       clickhouse:
         condition: service_healthy
@@ -35,6 +33,7 @@ services:
         window: 120s
     labels:
       - "traefik.enable=true"
+      - "traefik.port=8080"
       - "traefik.http.routers.whoami.rule=Host(`api.analiza.dev`)"
       - "traefik.http.routers.whoami.entrypoints=web"
   clickhouse:
@@ -108,8 +107,6 @@ services:
       retries: 5
   postgrest:
     image: postgrest/postgrest
-    ports:
-      - "3001:3000"
     command:
       - "postgrest"
       - "/config/postgrest.conf"
@@ -128,6 +125,7 @@ services:
         window: 120s
     labels:
       - "traefik.enable=true"
+      - "traefik.port=3000"
       - "traefik.http.routers.whoami.rule=Host(`admin.analiza.dev`)"
       - "traefik.http.routers.whoami.entrypoints=web"
   postgrest_flyway:
