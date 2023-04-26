@@ -42,9 +42,6 @@ services:
     environment:
       - CLICKHOUSE_ADMIN_USER=eye_admin
       - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
-    ports:
-      - '8123:8123'
-      - '9000:9000'
     volumes:
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
       - type: bind
@@ -73,8 +70,6 @@ services:
     image: 'metabase-clickhouse'
     build: metabase
     container_name: 'metabase'
-    ports:
-      - '3002:3000'
     environment:
       - MB_DB_TYPE=postgres
       - MB_DB_DBNAME=metabase
@@ -126,8 +121,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=3000"
-      - "traefik.http.routers.whoami.rule=Host(`admin.analiza.dev`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.api.rule=Host(`admin.analiza.dev`)"
+      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.routers.api.middlewares=cors"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
   postgrest_flyway:
     image: flyway/flyway
     command: -url=jdbc:postgresql://postgres:5432/eye_admin -user=postgres -password=super_secret_password -connectRetries=60 migrate
@@ -144,8 +144,6 @@ services:
         window: 120s
   swagger:
     image: swaggerapi/swagger-ui
-    ports:
-      - "8081:8080"
     environment:
       API_URL: http://localhost:3001/
     deploy:
@@ -170,8 +168,6 @@ services:
         window: 120s
   postgres:
     image: bitnami/postgresql:15.2.0
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
