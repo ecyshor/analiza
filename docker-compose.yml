@@ -126,8 +126,8 @@ services:
       - "traefik.http.routers.admin.entrypoints=web"
       - "traefik.http.routers.admin.middlewares=cors"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*"
-      - "traefik.http.middlewares.cors.headers.customResponseHeaders.Access-Control-Allow-Origin=app.analiza.dev"
-      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.cors.headers.customresponseheaders.Access-Control-Allow-Origin=app.analiza.dev"
+      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors.headers.addvaryheader=true"
   postgrest_flyway:
     image: flyway/flyway
