@@ -128,7 +128,6 @@ services:
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=app.analiza.dev"
-      - "traefik.http.middlewares.cors.headers.customresponseheaders.Access-Control-Allow-Origin=app.analiza.dev"
       - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors.headers.addvaryheader=true"
   postgrest_flyway:
