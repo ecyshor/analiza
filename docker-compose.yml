@@ -177,6 +177,7 @@ services:
       - type: bind
         source: ${ANALIZA_DATA_DIR:-/data/analiza}/postgres/data
         target: /bitnami/postgresql
+        read_only: true
     deploy:
       restart_policy:
         condition: on-failure
