@@ -188,7 +188,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
       POSTGRES_DATABASE: postgres
-    command: [ "postgres", "-c", "log_statement=all" ]
+      POSTGRESQL_EXTRA_FLAGS: "log_statement=all"
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d/
       - type: bind
