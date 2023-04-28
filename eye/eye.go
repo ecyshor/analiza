@@ -140,6 +140,9 @@ func (s *Server) health(w http.ResponseWriter, request *http.Request) {
 
 func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	// Parse the JSON request body
+	for k, v := range request.Header {
+		fmt.Printf("Header KV: %v: %v\n", k, v)
+	}
 	var userEvent UserEvent
 	if err := json.NewDecoder(request.Body).Decode(&userEvent); err != nil {
 		http.Error(w, "Invalid JSON request body", http.StatusBadRequest)
