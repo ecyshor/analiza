@@ -226,6 +226,7 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 	}
 	for _, event := range rows {
 		err := batch.Append(
+			event.Tenant,
 			event.Domain,
 			event.UserIdentifier,
 			event.EventType.String(),
