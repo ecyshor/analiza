@@ -92,7 +92,7 @@ func (dc *DomainChecker) checkTenantDomainFromData(ctx context.Context, tenantID
 
 func (db *DBDomainFetcher) GetDomains(ctx context.Context, tenantID string) (map[string]struct{}, error) {
 	log.Printf("Querying domains for tenant %s", tenantID)
-	rows, err := db.db.Query(ctx, "SELECT domain FROM api.domains")
+	rows, err := db.db.Query(ctx, "SELECT domain FROM api.domains WHERE tenant_id = $1", tenantID)
 	if err != nil {
 		log.Printf("Failed to query domains %s", err)
 		return nil, fmt.Errorf("error querying domains for tenant %s: %w", tenantID, err)
@@ -104,6 +104,7 @@ func (db *DBDomainFetcher) GetDomains(ctx context.Context, tenantID string) (map
 		var domain string
 		err := rows.Scan(&domain)
 		if err != nil {
+			log.Printf("Failed to read domain %s", err)
 			return nil, fmt.Errorf("error scanning domain for tenant %s: %w", tenantID, err)
 		}
 		log.Printf("Read domain %s for tenant %s", domain, tenantID)
