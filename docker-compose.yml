@@ -82,6 +82,11 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3000"
+      - "traefik.http.routers.api.rule=Host(`metabase.analiza.dev`)"
+      - "traefik.http.routers.api.entrypoints=web"
     deploy:
       restart_policy:
         condition: on-failure
