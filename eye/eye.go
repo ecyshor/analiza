@@ -140,7 +140,6 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	for k, v := range request.Header {
 		fmt.Printf("Header KV: %v: %v\n", k, v)
 	}
-	log.Printf("Address: %s", request.RemoteAddr)
 	var userEvent UserEvent
 	if err := json.NewDecoder(request.Body).Decode(&userEvent); err != nil {
 		http.Error(w, "Invalid JSON request body", http.StatusBadRequest)
@@ -172,7 +171,9 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	event.InsertTime = now
 	month := now.Format("January")
 
-	idHash := highwayhash.Sum([]byte(month+request.UserAgent()+request.RemoteAddr), s.seed)
+	realIp := request.Header.Get("X-Real-Ip")
+	log.Printf("Real IP: %s", realIp)
+	idHash := highwayhash.Sum([]byte(month+request.UserAgent()+realIp), s.seed)
 	idContent := hex.EncodeToString(idHash[:])
 
 	event.UserIdentifier = idContent
