@@ -85,8 +85,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=3000"
-      - "traefik.http.routers.api.rule=Host(`metabase.analiza.dev`)"
-      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.routers.metabase.rule=Host(`metabase.analiza.dev`)"
+      - "traefik.http.routers.metabase.entrypoints=web"
     deploy:
       restart_policy:
         condition: on-failure
