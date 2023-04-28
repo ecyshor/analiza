@@ -194,13 +194,16 @@ func (s *Server) batchInsertRows(eventChan <-chan Event, checker *DomainChecker)
 		case event := <-eventChan:
 			tenant, err := checker.CheckDomainForTenant(context.Background(), event.Tenant.String(), event.Domain)
 			if err != nil {
-				log.Printf("Failed to check domain %s", err)
+				log.Printf("Failed to check domain %s for event %s", err, event)
+			} else {
 				if tenant {
 					rows = append(rows, event)
 					if len(rows) == 100 {
 						insertRows(s.conn, rows)
 						rows = nil
 					}
+				} else {
+					log.Printf("Tenant %s did not pass check", event.Tenant)
 				}
 			}
 
