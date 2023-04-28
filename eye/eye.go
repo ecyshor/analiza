@@ -114,7 +114,7 @@ func main() {
 
 	// Start a goroutine to batch insert the queued rows
 	log.Printf("Creating domain check with database %s, user %s and host %s", config.postgres.database, config.postgres.user, config.postgres.host)
-	checker, err := NewDbDomainChecker(fmt.Sprintf("postgres://%s:%s@%s:5432/%s",
+	checker, err := NewDbDomainChecker(fmt.Sprintf("postgres://%s:%s@%s:5432/%s?search_path=api",
 		config.postgres.user, config.postgres.password, config.postgres.host, config.postgres.database))
 	if err != nil {
 		log.Printf("Failed to start the domain checker %s", err)
