@@ -18,7 +18,11 @@
     }
 
     function sendEvent(eventData) {
-        navigator.sendBeacon(endpoint + "/eye", JSON.stringify(eventData));
+        fetch(endpoint + "/eye", {
+            keepalive: true,
+            method: 'POST',
+            body: JSON.stringify(JSON.stringify(eventData)),
+        });
     }
 
     if (tenant.length === 36) {
