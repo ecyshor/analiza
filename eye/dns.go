@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -38,10 +38,11 @@ func NewDomainChecker(fetcher DomainFetcher) *DomainChecker {
 }
 
 func NewDbDomainChecker(dbURL string) (*DomainChecker, error) {
-	dbpool, err := pgxpool.Connect(context.Background(), dbURL)
+	dbpool, err := pgxpool.New(context.Background(), dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("error creating database connection pool: %w", err)
 	}
+	log.Print("Created new database domain checker")
 
 	return NewDomainChecker(&DBDomainFetcher{db: dbpool}), nil
 }
@@ -89,7 +90,8 @@ func (dc *DomainChecker) checkTenantDomainFromData(ctx context.Context, tenantID
 }
 
 func (db *DBDomainFetcher) GetDomains(ctx context.Context, tenantID string) (map[string]struct{}, error) {
-	rows, err := db.db.Query(ctx, "SELECT domains FROM api.domains WHERE tenant_id = $1", tenantID)
+	log.Printf("Querying domains for tenant %s", tenantID)
+	rows, err := db.db.Query(ctx, "SELECT domain FROM api.domains WHERE tenant_id = $1", tenantID)
 	if err != nil {
 		return nil, fmt.Errorf("error querying domains for tenant %s: %w", tenantID, err)
 	}
