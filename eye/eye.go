@@ -17,10 +17,6 @@ import (
 	"github.com/minio/highwayhash"
 )
 
-const (
-	seedConstant = "currently_constant_seed"
-)
-
 type UserEventType string
 
 func (e UserEventType) String() string {
@@ -255,14 +251,14 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 }
 
 func initTables(c clickhouse.Conn) {
-	dropTable := `DROP TABLE IF EXISTS events`
-	err := c.Exec(context.Background(), dropTable)
-	if err != nil {
-		log.Printf("Failed to drop table %s", err)
-		panic(err)
-	} else {
-		log.Println("Clickhouse schema dropped")
-	}
+	//dropTable := `DROP TABLE IF EXISTS events`
+	//err := c.Exec(context.Background(), dropTable)
+	//if err != nil {
+	//	log.Printf("Failed to drop table %s", err)
+	//	panic(err)
+	//} else {
+	//	log.Println("Clickhouse schema dropped")
+	//}
 	createTable := `
 		CREATE TABLE IF NOT EXISTS events (
 		    tenant_id UUID,
@@ -281,7 +277,7 @@ func initTables(c clickhouse.Conn) {
 		) ENGINE = MergeTree
 		ORDER BY (tenant_id, domain, insert_time);
 	`
-	err = c.Exec(context.Background(), createTable)
+	err := c.Exec(context.Background(), createTable)
 	if err != nil {
 		log.Printf("Failed to create table %s", err)
 		panic(err)
