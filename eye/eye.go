@@ -172,8 +172,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	month := now.Format("January")
 
 	realIp := request.Header.Get("X-Real-Ip")
-	log.Printf("Real IP: %s", realIp)
-	idHash := highwayhash.Sum([]byte(month+request.UserAgent()+realIp), s.seed)
+	idHash := highwayhash.Sum([]byte(month+request.UserAgent()+request.Header.Get("Accept-Language")+realIp), s.seed)
 	idContent := hex.EncodeToString(idHash[:])
 
 	event.UserIdentifier = idContent
