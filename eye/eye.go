@@ -140,7 +140,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	for k, v := range request.Header {
 		fmt.Printf("Header KV: %v: %v\n", k, v)
 	}
-	fmt.Printf("Address: %s", request.RemoteAddr)
+	log.Printf("Address: %s", request.RemoteAddr)
 	var userEvent UserEvent
 	if err := json.NewDecoder(request.Body).Decode(&userEvent); err != nil {
 		http.Error(w, "Invalid JSON request body", http.StatusBadRequest)
