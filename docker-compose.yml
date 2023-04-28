@@ -9,8 +9,8 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.forwardedHeaders.trustedIPs=10.0.0.0/16"
-#      - "--entrypoints.http.proxyProtocol=true"
-#      - "--entrypoints.http.proxyProtocol.trustedIPs=10.0.0.0/16"
+      - "--entrypoints.http.proxyProtocol=true"
+      - "--entrypoints.http.proxyProtocol.trustedIPs=10.0.0.0/16"
     ports:
       - "80:80"
       - "8080:8080"
