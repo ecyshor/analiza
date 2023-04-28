@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 import "github.com/ClickHouse/clickhouse-go/v2"
@@ -149,7 +150,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 		return
 	}
 	var event Event
-	event.Domain = request.Header.Get("Origin")
+	event.Domain = strings.TrimPrefix(strings.TrimPrefix(request.Header.Get("Origin"), "http://"), "https://")
 
 	event.Tenant = userEvent.Tenant
 	event.EventType = userEvent.EventType
