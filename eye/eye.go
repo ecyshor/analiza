@@ -203,7 +203,7 @@ func (s *Server) batchInsertRows(eventChan <-chan Event, checker *DomainChecker)
 						rows = nil
 					}
 				} else {
-					log.Printf("Tenant %s did not pass check", event.Tenant)
+					log.Printf("Tenant %s did not pass check for domain %s", event.Tenant, event.Domain)
 				}
 			}
 
