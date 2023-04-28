@@ -21,7 +21,7 @@
         fetch(endpoint + "/eye", {
             keepalive: true,
             method: 'POST',
-            body: JSON.stringify(JSON.stringify(eventData)),
+            body: JSON.stringify(eventData),
         });
     }
 
