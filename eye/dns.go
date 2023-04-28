@@ -100,7 +100,8 @@ func (db *DBDomainFetcher) GetDomains(ctx context.Context, tenantID string) (map
 	domains := make(map[string]struct{})
 	for rows.Next() {
 		var domain string
-		if err := rows.Scan(&domain); err != nil {
+		err := rows.Scan(&domain)
+		if err != nil {
 			return nil, fmt.Errorf("error scanning domain for tenant %s: %w", tenantID, err)
 		}
 		log.Printf("Read domain %s for tenant %s", domain, tenantID)

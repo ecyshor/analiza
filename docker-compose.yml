@@ -47,7 +47,7 @@ services:
       - "traefik.http.middlewares.cors2.headers.addvaryheader=true"
   clickhouse:
     image: docker.io/bitnami/clickhouse:23.3.1
-#    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
+    #    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
     environment:
       - CLICKHOUSE_ADMIN_USER=eye_admin
       - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
@@ -188,6 +188,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
       POSTGRES_DATABASE: postgres
+    command: [ "postgres", "-c", "log_statement=all" ]
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d/
       - type: bind
