@@ -5,6 +5,7 @@ import (
 	_ "database/sql"
 	_ "errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -69,6 +70,7 @@ func (dc *DomainChecker) checkTenantDomainFromData(ctx context.Context, tenantID
 		if err != nil {
 			return false, err
 		}
+		log.Printf("For tenant %s got domains %s", tenantID, domains)
 		dc.domainCache.Set(tenantID, domains, cacheExpiry)
 		cachedDomains = domains
 	}
