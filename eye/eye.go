@@ -113,6 +113,7 @@ func main() {
 	// Create a channel to queue the rows for batch inserts
 
 	// Start a goroutine to batch insert the queued rows
+	log.Printf("Creating domain check with database %s, user %s and host %s", config.postgres.database, config.postgres.user, config.postgres.host)
 	checker, err := NewDbDomainChecker(fmt.Sprintf("postgres://%s:%s@%s:5432/%s",
 		config.postgres.user, config.postgres.password, config.postgres.host, config.postgres.database))
 	if err != nil {
