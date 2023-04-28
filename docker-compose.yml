@@ -36,6 +36,12 @@ services:
       - "traefik.port=8080"
       - "traefik.http.routers.api.rule=Host(`api.analiza.dev`)"
       - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.routers.api.middlewares=cors2"
+      - "traefik.http.middlewares.cors2.headers.accesscontrolallowmethods=*"
+      - "traefik.http.middlewares.cors2.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors2.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors2.headers.accesscontrolmaxage=200"
+      - "traefik.http.middlewares.cors2.headers.addvaryheader=true"
   clickhouse:
     image: docker.io/bitnami/clickhouse:23.3.1
 #    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
