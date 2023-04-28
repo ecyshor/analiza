@@ -97,12 +97,9 @@ func (db *DBDomainFetcher) GetDomains(ctx context.Context, tenantID string) (map
 		log.Printf("Failed to query domains %s", err)
 		return nil, fmt.Errorf("error querying domains for tenant %s: %w", tenantID, err)
 	}
-	defer rows.Close()
 
 	domains := make(map[string]struct{})
-	next := rows.Next()
-	log.Printf("Next %s", next)
-	for next {
+	for rows.Next() {
 		var domain string
 		err := rows.Scan(&domain)
 		if err != nil {
@@ -111,7 +108,6 @@ func (db *DBDomainFetcher) GetDomains(ctx context.Context, tenantID string) (map
 		}
 		log.Printf("Read domain %s for tenant %s", domain, tenantID)
 		domains[domain] = struct{}{}
-		next = rows.Next()
 	}
 	if err := rows.Err(); err != nil {
 		log.Printf("Failed to query domains %s", err)
