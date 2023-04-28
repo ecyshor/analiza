@@ -69,6 +69,7 @@ func (dc *DomainChecker) checkTenantDomainFromData(ctx context.Context, tenantID
 		// get domains for tenant from database
 		domains, err := dc.fetcher.GetDomains(ctx, tenantID)
 		if err != nil {
+			log.Printf("Failed to fetch tenant %s domains with err %s", tenantID, err)
 			return false, err
 		}
 		log.Printf("For tenant %s got domains %s", tenantID, domains)
