@@ -7,13 +7,13 @@
 
     function view() {
         sendEvent({
-            type: "view", path: location.href, tenant: tenant
+            t: "view", p: location.href, e: tenant, r: document.referrer
         });
     }
 
     function gone() {
         sendEvent({
-            type: "gone", path: location.href, tenant: tenant
+            t: "gone", p: location.href, e: tenant, r: document.referrer
         });
     }
 

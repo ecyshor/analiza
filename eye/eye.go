@@ -36,9 +36,10 @@ const (
 )
 
 type UserEvent struct {
-	EventType UserEventType `json:"type"`
-	Path      string        `json:"path"`
-	Tenant    uuid.UUID     `json:"tenant"`
+	EventType UserEventType `json:"t"`
+	Path      string        `json:"p"`
+	Tenant    uuid.UUID     `json:"u"`
+	Referral  string        `json:"r"`
 }
 
 type Event struct {
@@ -148,7 +149,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 
 	event.Tenant = userEvent.Tenant
 	event.EventType = userEvent.EventType
-	// Get the referral, utm, and source query params from the HTTP request
+	event.Referral = userEvent.Referral
 
 	pageUrl, err := url.Parse(userEvent.Path)
 	if err != nil {
@@ -159,7 +160,6 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 		event.UtmCampaign = pageUrl.Query().Get("utm_campaign")
 	}
 
-	event.Referral = request.Header.Get("Referer")
 	event.Path = pageUrl.Path
 
 	event.UserAgent = request.UserAgent()
