@@ -9,13 +9,13 @@
     function view() {
         lastPage = location.href
         sendEvent({
-            t: "view", p: location.href, e: tenant, r: document.referrer
+            t: "view", p: location.href, u: tenant, r: document.referrer
         });
     }
 
     function gone() {
         sendEvent({
-            t: "gone", p: location.href, e: tenant, r: document.referrer
+            t: "gone", p: location.href, u: tenant, r: document.referrer
         });
     }
 
