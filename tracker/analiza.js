@@ -4,8 +4,10 @@
     const scriptEl = document.currentScript;
     const endpoint = scriptEl.getAttribute("hostname") || "https://api.analiza.dev";
     const tenant = scriptEl.getAttribute("tenant");
+    let lastPage = location.href
 
     function view() {
+        lastPage = location.href
         sendEvent({
             t: "view", p: location.href, e: tenant, r: document.referrer
         });
@@ -19,9 +21,7 @@
 
     function sendEvent(eventData) {
         fetch(endpoint + "/eye", {
-            keepalive: true,
-            method: 'POST',
-            body: JSON.stringify(eventData),
+            keepalive: true, method: 'POST', body: JSON.stringify(eventData),
         });
     }
 
@@ -29,6 +29,14 @@
 
         if (document.visibilityState === "visible") {
             view();
+        }
+        let pushState = history.pushState
+        if (history.pushState) {
+            history.pushState = function () {
+                pushState.apply(history, arguments);
+                view()
+            };
+            window.addEventListener('popstate', view)
         }
 
         document.onvisibilitychange = () => {
