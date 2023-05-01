@@ -34,6 +34,8 @@ export default function EyeAdmin() {
 
         getId()
     }, [])
+    const Setup = <div
+        dangerouslySetInnerHTML={{__html: `<script src="https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js" tenant="${tenantId}"></script>`}}></div>
     return (
         <BrowserRouter>
             <Admin menu={CustomMenu} disableTelemetry requireAuth authProvider={authProvider}
@@ -49,7 +51,7 @@ export default function EyeAdmin() {
                         allowTransparency
                     />}/>
                 </CustomRoutes>
-                <Resource name="domains" list={DomainList} create={() => DomainCreate({tenantId})}/>
+                <Resource name="domains" list={DomainList} create={() => DomainCreate({tenantId})} children={Setup}/>
             </Admin>
         </BrowserRouter>
     )
