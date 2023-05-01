@@ -40,6 +40,7 @@ export default function EyeAdmin() {
                    dataProvider={dataProvider} authCallbackPage={AuthCallback}>
                 <CustomRoutes>
                     <Route path="/data" element={<iframe
+                        title={"Analytics"}
                         src={"https://metabase.analiza.dev/embed/dashboard/" + metabaseToken + "#bordered=true&titled=true"}
                         frameBorder={0}
                         width={800}
