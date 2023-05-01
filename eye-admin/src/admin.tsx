@@ -1,4 +1,4 @@
-import {Admin, AuthCallback, CustomRoutes, Resource} from 'react-admin';
+import {Admin, AuthCallback, CustomRoutes, Menu, Resource} from 'react-admin';
 import postgrestRestProvider from "@promitheus/ra-data-postgrest";
 import {Auth0AuthProvider, httpClient} from 'ra-auth-auth0';
 import {Auth0Client} from '@auth0/auth0-spa-js';
@@ -36,8 +36,9 @@ export default function EyeAdmin() {
     }, [])
     return (
         <BrowserRouter>
-            <Admin disableTelemetry requireAuth authProvider={authProvider}
-                   dataProvider={dataProvider} authCallbackPage={AuthCallback}>
+            <Admin menu={CustomMenu} disableTelemetry requireAuth authProvider={authProvider}
+                   dataProvider={dataProvider}
+                   authCallbackPage={AuthCallback}>
                 <CustomRoutes>
                     <Route path="/data" element={<iframe
                         title={"Analytics"}
@@ -53,3 +54,8 @@ export default function EyeAdmin() {
         </BrowserRouter>
     )
 }
+const CustomMenu = () => <Menu>
+    <Menu.DashboardItem/>
+    <Menu.Item to="/data" primaryText="Data"/>
+    <Menu.ResourceItem name="domains"/>
+</Menu>
