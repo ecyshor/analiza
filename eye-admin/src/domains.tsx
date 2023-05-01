@@ -13,7 +13,7 @@ export const DomainCreate = (props: { tenantId: string }) => (
         <SimpleForm>
             <TextInput source="domain" validate={[regex(/.{1,200}\.[a-z]{2,63}/)]}
                        fullWidth/>
-            <TextInput source="tenant_id" defaultValue={props.tenantId}/>
+            <TextInput source="tenant_id" defaultValue={props.tenantId} hidden={true}/>
         </SimpleForm>
     </Create>
 );
