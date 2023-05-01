@@ -160,7 +160,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 		event.UtmCampaign = pageUrl.Query().Get("utm_campaign")
 	}
 
-	event.Path = pageUrl.Path
+	event.Path = strings.TrimSuffix(pageUrl.Path, "/")
 
 	event.UserAgent = request.UserAgent()
 
