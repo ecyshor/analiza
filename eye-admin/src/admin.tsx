@@ -44,8 +44,8 @@ export default function EyeAdmin() {
                         title={"Analytics"}
                         src={"https://metabase.analiza.dev/embed/dashboard/" + metabaseToken + "#bordered=true&titled=true"}
                         frameBorder={0}
-                        width={800}
-                        height={600}
+                        width={"100%"}
+                        height={"100%"}
                         allowTransparency
                     />}/>
                 </CustomRoutes>
