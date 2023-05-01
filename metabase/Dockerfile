@@ -1,4 +1,4 @@
-FROM metabase/metabase:v0.46.0-RC3
+FROM metabase/metabase:v0.46.2
 
 ENV METABASE_CLICKHOUSE_DRIVER_VERSION=1.1.3
 
