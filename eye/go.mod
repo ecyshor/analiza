@@ -6,6 +6,7 @@ require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v5 v5.3.1
+	github.com/mileusna/useragent v1.3.2
 	github.com/minio/highwayhash v1.0.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.8.1

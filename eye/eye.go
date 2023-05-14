@@ -14,6 +14,7 @@ import (
 )
 import "github.com/ClickHouse/clickhouse-go/v2"
 import (
+	"github.com/mileusna/useragent"
 	"github.com/minio/highwayhash"
 )
 
@@ -53,9 +54,9 @@ type Event struct {
 	UtmCampaign    string        `json:"utm_campaign"`
 	UtmTerm        string        `json:"utm_term"`
 	UtmContent     string        `json:"utm_content"`
-	UserAgent      string        `json:"user_agent"`
-	InsertTime     time.Time     `json:"insert_time"`
-	Path           string        `json:"path"`
+	UserAgent      useragent.UserAgent
+	InsertTime     time.Time `json:"insert_time"`
+	Path           string    `json:"path"`
 }
 
 type Server struct {
@@ -162,7 +163,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 
 	event.Path = strings.TrimSuffix(pageUrl.Path, "/")
 
-	event.UserAgent = request.UserAgent()
+	event.UserAgent = useragent.Parse(request.UserAgent())
 
 	// Set the insertion time to the current time
 	now := time.Now()
@@ -220,7 +221,17 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	batch, err := conn.PrepareBatch(ctx, "INSERT INTO events (tenant_id, domain, user_id, type, referral, utm_source, utm_medium, utm_campaign, utm_term, utm_content, user_agent, insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	batch, err := conn.PrepareBatch(ctx, `INSERT INTO events (tenant_id, domain, user_id, type, referral, utm_source, utm_medium, utm_campaign, utm_term, utm_content, 
+			user_agent_name ,
+			user_agent_version ,
+			user_agent_os ,
+			user_agent_os_version ,
+			user_agent_device ,
+			user_agent_bot ,
+			user_agent_mobile ,
+			user_agent_table ,
+			user_agent_desktop ,
+            insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,?, ?)`)
 	if err != nil {
 		log.Printf("Error getting ClickHouse batch: %s", err)
 	}
@@ -236,7 +247,15 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 			event.UtmCampaign,
 			event.UtmTerm,
 			event.UtmContent,
-			event.UserAgent,
+			event.UserAgent.Name,
+			event.UserAgent.Version,
+			event.UserAgent.OS,
+			event.UserAgent.OSVersion,
+			event.UserAgent.Device,
+			event.UserAgent.Bot,
+			event.UserAgent.Mobile,
+			event.UserAgent.Tablet,
+			event.UserAgent.Desktop,
 			event.InsertTime,
 			event.Path,
 		)
@@ -271,12 +290,30 @@ func initTables(c clickhouse.Conn) {
 			utm_campaign String,
 			utm_term String,
 			utm_content String,
-			user_agent String,
+			user_agent_name String,
+			user_agent_version String,
+			user_agent_os String,
+			user_agent_os_version String,
+			user_agent_device String,
+			user_agent_bot BOOLEAN,
+			user_agent_mobile BOOLEAN,
+			user_agent_table BOOLEAN,
+			user_agent_desktop BOOLEAN,
 			insert_time DateTime,
 			path String
 		) ENGINE = MergeTree
 		ORDER BY (tenant_id, domain, insert_time);
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_name String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_version String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_os String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_os_version String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_device String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_bot BOOLEAN;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_mobile BOOLEAN;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_table BOOLEAN;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_desktop BOOLEAN;
 	`
+
 	err := c.Exec(context.Background(), createTable)
 	if err != nil {
 		log.Printf("Failed to create table %s", err)
