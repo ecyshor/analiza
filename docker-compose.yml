@@ -37,7 +37,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=8080"
-      - "traefik.http.routers.api.rule=Host(`api.analiza.dev`)"
+      - "traefik.http.routers.api.rule=Host(`api.analiza.dev`) || Host(`api.dev.analiza.lan`)"
       - "traefik.http.routers.api.entrypoints=web"
       - "traefik.http.routers.api.middlewares=cors2"
       - "traefik.http.middlewares.cors2.headers.accesscontrolallowmethods=*"
@@ -61,7 +61,11 @@ services:
         soft: 262144
         hard: 262144
     healthcheck:
-      test: [ "CMD-SHELL", "clickhouse client -u $${CLICKHOUSE_ADMIN_USER} --password $${CLICKHOUSE_ADMIN_PASSWORD} -q 'SELECT 1'" ]
+      test:
+        [
+          "CMD-SHELL",
+          "clickhouse client -u $${CLICKHOUSE_ADMIN_USER} --password $${CLICKHOUSE_ADMIN_PASSWORD} -q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -73,12 +77,12 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '4'
+          cpus: "4"
           memory: 8G
   metabase:
-    image: 'metabase-clickhouse'
+    image: "metabase-clickhouse"
     build: metabase
-    container_name: 'metabase'
+    container_name: "metabase"
     environment:
       - MB_DB_TYPE=postgres
       - MB_DB_DBNAME=metabase
@@ -94,7 +98,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=3000"
-      - "traefik.http.routers.metabase.rule=Host(`metabase.analiza.dev`)"
+      - "traefik.http.routers.metabase.rule=Host(`metabase.analiza.dev`) || Host(`metabase.dev.analiza.lan`)"
       - "traefik.http.routers.metabase.entrypoints=web"
     deploy:
       restart_policy:
@@ -104,10 +108,10 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 2G
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 500M
     healthcheck:
       test: curl --fail -I http://localhost:3000/api/health || exit 1
@@ -136,12 +140,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=3000"
-      - "traefik.http.routers.admin.rule=Host(`admin.analiza.dev`)"
+      - "traefik.http.routers.admin.rule=Host(`admin.analiza.dev`) || Host(`admin.dev.analiza.lan`)"
       - "traefik.http.routers.admin.entrypoints=web"
       - "traefik.http.routers.admin.middlewares=cors"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://app.analiza.dev"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://app.analiza.dev, http://app.dev.analiza.lan, http://localhost:5174"
       - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors.headers.addvaryheader=true"
   postgrest_flyway:
@@ -201,8 +205,7 @@ services:
         max_attempts: 3
         window: 120s
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-
