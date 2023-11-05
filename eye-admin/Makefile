@@ -1,6 +1,8 @@
 #!make
-include .env.private
-export $(shell sed 's/=.*//' .env.private)
+ifneq ("$(wildcard .env.private)","")
+	include .env.private
+	export $(shell sed 's/=.*//' .env.private)
+endif
 
 .PHONY: build 
 build: 
