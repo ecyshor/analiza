@@ -241,7 +241,8 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 			user_agent_mobile ,
 			user_agent_table ,
 			user_agent_desktop ,
-            insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,?, ?)`)
+			user_country,
+            insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,?, ?)`)
 	if err != nil {
 		log.Printf("Error getting ClickHouse batch: %s", err)
 	}
@@ -266,6 +267,7 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 			event.UserAgent.Mobile,
 			event.UserAgent.Tablet,
 			event.UserAgent.Desktop,
+			event.UserCountry,
 			event.InsertTime,
 			event.Path,
 		)
