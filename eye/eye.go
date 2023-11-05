@@ -172,7 +172,11 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 
 	event.Path = strings.TrimSuffix(pageUrl.Path, "/")
 
+	log.Printf("Headers: %s", request.Header)
 	realIp := request.Header.Get("X-Real-Ip")
+	if realIp == "" {
+		realIp = request.Header.Get("X-Forwarded-For")
+	}
 	event.UserAgent = useragent.Parse(request.UserAgent())
 	event.UserCountry = s.resolveCountry(net.IP(realIp))
 
