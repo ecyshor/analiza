@@ -5,15 +5,14 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-)
-import "github.com/ClickHouse/clickhouse-go/v2"
-import (
+
+	"github.com/ClickHouse/clickhouse-go/v2"
+	"github.com/google/uuid"
 	"github.com/mileusna/useragent"
 	"github.com/minio/highwayhash"
 )
@@ -313,13 +312,16 @@ func initTables(c clickhouse.Conn) {
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_table BOOLEAN;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_desktop BOOLEAN;
 	`
+	statements := strings.Split(createTable, ";")
 
-	err := c.Exec(context.Background(), createTable)
-	if err != nil {
-		log.Printf("Failed to create table %s", err)
-		panic(err)
-	} else {
-		log.Println("Clickhouse schema initialized")
+	for _, statement := range statements {
+		err := c.Exec(context.Background(), statement)
+		if err != nil {
+			log.Printf("Failed to create table %s", err)
+			panic(err)
+		} else {
+			log.Println("Clickhouse schema initialized")
+		}
 	}
 
 }
