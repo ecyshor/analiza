@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -16,7 +15,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/mileusna/useragent"
 	"github.com/minio/highwayhash"
-	"github.com/oschwald/geoip2-golang"
 )
 
 type UserEventType string
@@ -62,10 +60,10 @@ type Event struct {
 }
 
 type Server struct {
-	conn   clickhouse.Conn
-	events chan Event
-	seed   []byte
-	geoDb  *geoip2.Reader
+	conn      clickhouse.Conn
+	events    chan Event
+	seed      []byte
+	geoReader *GeoReader
 }
 
 func main() {
@@ -92,11 +90,6 @@ func main() {
 		BlockBufferSize:      10,
 		MaxCompressionBuffer: 10240,
 	})
-	geoDb, err := geoip2.Open("/geo.mmdb")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer geoDb.Close()
 	if err != nil {
 		log.Printf("Error connecting to clickhouse: %s", err)
 		panic(err)
@@ -115,11 +108,13 @@ func main() {
 		log.Printf("Failed to decode seed: %s", err)
 		panic(err)
 	}
+	geoReader := NewGeoReader()
+	defer geoReader.Close()
 	server := &Server{
-		conn:   conn,
-		events: eventChannel,
-		seed:   seedHash,
-		geoDb:  geoDb,
+		conn:      conn,
+		events:    eventChannel,
+		seed:      seedHash,
+		geoReader: geoReader,
 	}
 	// Create a channel to queue the rows for batch inserts
 
@@ -177,7 +172,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 		realIp = request.Header.Get("X-Forwarded-For")
 	}
 	event.UserAgent = useragent.Parse(request.UserAgent())
-	event.UserCountry = s.resolveCountry(net.IP(realIp))
+	event.UserCountry = s.geoReader.ResolveCountry(realIp)
 
 	// Set the insertion time to the current time
 	now := time.Now()
@@ -191,7 +186,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	if event.Domain != "" {
 		s.events <- event
 	} else {
-		log.Printf("Event with empty domain: %s", event)
+		log.Printf("Event with empty domain: %+v", event)
 	}
 
 	// Write a response back to the client
@@ -207,7 +202,7 @@ func (s *Server) batchInsertRows(eventChan <-chan Event, checker *DomainChecker)
 		case event := <-eventChan:
 			tenant, err := checker.CheckDomainForTenant(context.Background(), event.Tenant.String(), event.Domain)
 			if err != nil {
-				log.Printf("Failed to check domain %s for event %s", err, event)
+				log.Printf("Failed to check domain %s for event %+v", err, event)
 			} else {
 				if tenant {
 					rows = append(rows, event)
@@ -345,16 +340,4 @@ func initTables(c clickhouse.Conn) {
 		}
 	}
 
-}
-
-// use golang geo library to determine the country
-func (s *Server) resolveCountry(ip net.IP) string {
-	country, err := s.geoDb.Country(ip)
-	log.Printf("For ip %s, got %s", ip, country)
-	if err != nil {
-		log.Printf("Failed to determine country %s", err)
-		return ""
-	} else {
-		return country.Country.IsoCode
-	}
 }
