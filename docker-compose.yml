@@ -90,6 +90,7 @@ services:
       - MB_DB_USER=metabase
       - MB_DB_PASS=metabase_super_password
       - MB_DB_HOST=postgres
+      - MB_REDIRECT_ALL_REQUESTS_TO_HTTPS=false
     depends_on:
       clickhouse:
         condition: service_healthy
