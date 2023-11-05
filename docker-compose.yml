@@ -145,7 +145,6 @@ services:
         max_attempts: 3
         window: 120s
     labels:
-      - "logging_exclude=true"
       - "logging_jobname=postgrest"
       - "traefik.enable=true"
       - "traefik.port=3000"
@@ -202,6 +201,8 @@ services:
       POSTGRES_PASSWORD: super_secret_password
       POSTGRES_DATABASE: postgres
       POSTGRESQL_EXTRA_FLAGS: "-c log_statement=all"
+    labels:
+      - "logging_exclude=true"
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d/
       - type: bind
