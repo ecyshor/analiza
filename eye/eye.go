@@ -346,9 +346,9 @@ func initTables(c clickhouse.Conn) {
 func (s *Server) resolveCountry(ip net.IP) string {
 	country, err := s.geoDb.Country(ip)
 	if err != nil {
-		return country.Country.IsoCode
-	} else {
 		log.Printf("Failed to determine country %s", err)
 		return ""
+	} else {
+		return country.Country.IsoCode
 	}
 }
