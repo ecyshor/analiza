@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,6 +16,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mileusna/useragent"
 	"github.com/minio/highwayhash"
+	"github.com/oschwald/geoip2-golang"
 )
 
 type UserEventType string
@@ -54,6 +56,7 @@ type Event struct {
 	UtmTerm        string        `json:"utm_term"`
 	UtmContent     string        `json:"utm_content"`
 	UserAgent      useragent.UserAgent
+	UserCountry    string    `json:"user_country"`
 	InsertTime     time.Time `json:"insert_time"`
 	Path           string    `json:"path"`
 }
@@ -62,6 +65,7 @@ type Server struct {
 	conn   clickhouse.Conn
 	events chan Event
 	seed   []byte
+	geoDb  *geoip2.Reader
 }
 
 func main() {
@@ -88,6 +92,11 @@ func main() {
 		BlockBufferSize:      10,
 		MaxCompressionBuffer: 10240,
 	})
+	geoDb, err := geoip2.Open("/geo.mmdb")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer geoDb.Close()
 	if err != nil {
 		log.Printf("Error connecting to clickhouse: %s", err)
 		panic(err)
@@ -110,6 +119,7 @@ func main() {
 		conn:   conn,
 		events: eventChannel,
 		seed:   seedHash,
+		geoDb:  geoDb,
 	}
 	// Create a channel to queue the rows for batch inserts
 
@@ -162,14 +172,15 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 
 	event.Path = strings.TrimSuffix(pageUrl.Path, "/")
 
+	realIp := request.Header.Get("X-Real-Ip")
 	event.UserAgent = useragent.Parse(request.UserAgent())
+	event.UserCountry = s.resolveCountry(net.IP(realIp))
 
 	// Set the insertion time to the current time
 	now := time.Now()
 	event.InsertTime = now
 	month := now.Format("January")
 
-	realIp := request.Header.Get("X-Real-Ip")
 	idHash := highwayhash.Sum([]byte(month+request.UserAgent()+request.Header.Get("Accept-Language")+realIp), s.seed)
 	idContent := hex.EncodeToString(idHash[:])
 
@@ -299,7 +310,8 @@ func initTables(c clickhouse.Conn) {
 			user_agent_table BOOLEAN,
 			user_agent_desktop BOOLEAN,
 			insert_time DateTime,
-			path String
+			path String,
+			user_country String
 		) ENGINE = MergeTree
 		ORDER BY (tenant_id, domain, insert_time);
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_name String;
@@ -311,6 +323,7 @@ func initTables(c clickhouse.Conn) {
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_mobile BOOLEAN;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_table BOOLEAN;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_desktop BOOLEAN;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_country String;
 	`
 	statements := strings.Split(createTable, ";")
 
@@ -327,4 +340,15 @@ func initTables(c clickhouse.Conn) {
 		}
 	}
 
+}
+
+// use golang geo library to determine the country
+func (s *Server) resolveCountry(ip net.IP) string {
+	country, err := s.geoDb.Country(ip)
+	if err != nil {
+		return country.Country.IsoCode
+	} else {
+		log.Printf("Failed to determine country %s", err)
+		return ""
+	}
 }
