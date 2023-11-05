@@ -1,6 +1,8 @@
 services:
   traefik:
     image: "traefik:v2.10"
+    labels:
+      logging_jobname: "traefik"
     container_name: "traefik"
     command:
       #- "--log.level=DEBUG"
@@ -35,6 +37,7 @@ services:
         max_attempts: 3
         window: 120s
     labels:
+      - "logging_jobname=eye"
       - "traefik.enable=true"
       - "traefik.port=8080"
       - "traefik.http.routers.api.rule=Host(`api.analiza.dev`) || Host(`api.dev.analiza.lan`)"
@@ -97,6 +100,7 @@ services:
       postgres:
         condition: service_healthy
     labels:
+      - "logging_jobname=metabase"
       - "traefik.enable=true"
       - "traefik.port=3000"
       - "traefik.http.routers.metabase.rule=Host(`metabase.analiza.dev`) || Host(`metabase.dev.analiza.lan`)"
@@ -139,6 +143,7 @@ services:
         max_attempts: 3
         window: 120s
     labels:
+      - "logging_jobname=postgrest"
       - "traefik.enable=true"
       - "traefik.port=3000"
       - "traefik.http.routers.admin.rule=Host(`admin.analiza.dev`) || Host(`admin.dev.analiza.lan`)"
