@@ -133,6 +133,8 @@ services:
     depends_on:
       postgrest_flyway:
         condition: service_completed_successfully
+    labels:
+      - "logging_exclude=true"
     volumes:
       - type: bind
         source: $ANALIZA_POSTGREST_CONFIG
