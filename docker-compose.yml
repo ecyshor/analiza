@@ -54,6 +54,8 @@ services:
     environment:
       - CLICKHOUSE_ADMIN_USER=eye_admin
       - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
+    labels:
+      - "logging_exclude=true"
     volumes:
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
       - type: bind
