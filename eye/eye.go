@@ -315,12 +315,15 @@ func initTables(c clickhouse.Conn) {
 	statements := strings.Split(createTable, ";")
 
 	for _, statement := range statements {
-		err := c.Exec(context.Background(), statement)
-		if err != nil {
-			log.Printf("Failed to create table %s", err)
-			panic(err)
-		} else {
-			log.Println("Clickhouse schema initialized")
+		processedStatement := strings.TrimSpace(statement)
+		if processedStatement != "" {
+			err := c.Exec(context.Background(), statement)
+			if err != nil {
+				log.Printf("Failed to create table %s", err)
+				panic(err)
+			} else {
+				log.Println("Clickhouse schema initialized")
+			}
 		}
 	}
 
