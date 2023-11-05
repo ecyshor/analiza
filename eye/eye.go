@@ -172,7 +172,6 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 
 	event.Path = strings.TrimSuffix(pageUrl.Path, "/")
 
-	log.Printf("Headers: %s", request.Header)
 	realIp := request.Header.Get("X-Real-Ip")
 	if realIp == "" {
 		realIp = request.Header.Get("X-Forwarded-For")
@@ -351,6 +350,7 @@ func initTables(c clickhouse.Conn) {
 // use golang geo library to determine the country
 func (s *Server) resolveCountry(ip net.IP) string {
 	country, err := s.geoDb.Country(ip)
+	log.Printf("For ip %s, got %s", ip, country)
 	if err != nil {
 		log.Printf("Failed to determine country %s", err)
 		return ""
