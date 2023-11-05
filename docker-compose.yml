@@ -133,8 +133,6 @@ services:
     depends_on:
       postgrest_flyway:
         condition: service_completed_successfully
-    labels:
-      - "logging_exclude=true"
     volumes:
       - type: bind
         source: $ANALIZA_POSTGREST_CONFIG
@@ -147,6 +145,7 @@ services:
         max_attempts: 3
         window: 120s
     labels:
+      - "logging_exclude=true"
       - "logging_jobname=postgrest"
       - "traefik.enable=true"
       - "traefik.port=3000"
