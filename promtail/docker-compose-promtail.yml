@@ -7,3 +7,5 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
     command: -config.file=/etc/promtail/docker-config.yaml -config.expand-env=true
+    environment:
+      - PROMTAIL_CLIENT_URL=${PROMTAIL_CLIENT_URL}
