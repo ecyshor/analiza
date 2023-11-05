@@ -41,6 +41,6 @@ scrape_configs:
         action: drop
     pipeline_stages:
       - match:
-          selector: '{job=""}'
+          selector: '{container=""}'
           action: drop
           drop_counter_reason: excluded
