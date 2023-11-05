@@ -7,6 +7,8 @@ positions:
         
 client:
   url: ${PROMTAIL_CLIENT_URL}
+  external_labels:
+    host: "hetzner"
         
 scrape_configs:
 # - job_name: system
@@ -23,6 +25,7 @@ scrape_configs:
       # filters:
       #   - name: label
       #     values: ["logging=promtail"]
+      labels:
   relabel_configs:
     - source_labels: ['__meta_docker_container_name']
       regex: '/(.*)'
