@@ -1,10 +1,10 @@
 .PHONY: start
 start:
-	docker compose up -f docker-compose-promtail.yml --build
+	docker compose -f docker-compose-promtail.yml up --build
 
 .PHONY: start_detached
 start_detached:
-	docker compose up -d --build -f docker-compose-promtail.yml
+	docker compose -f docker-compose-promtail.yml up -d --build 
 
 .PHONY: clean
 clean:
