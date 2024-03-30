@@ -5,7 +5,7 @@ let
 in
 pkgs.mkShell {
   buildInputs = [
-    hugo
+    pkgs.hugo
     pkgs.nodejs
     nodepackages.uglify-js
     pkgs.go
