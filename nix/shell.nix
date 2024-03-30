@@ -10,5 +10,6 @@ pkgs.mkShell {
     nodepackages.uglify-js
     pkgs.go
     pkgs.postgresql
+    pkgs.kubectl
   ];
 }
