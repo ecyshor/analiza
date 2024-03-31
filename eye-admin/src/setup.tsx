@@ -16,6 +16,9 @@ export const SetupAnaliza: FC<SetupAnalizaProps> = ({ tenantId }) => {
 			style={{ minHeight: '100vh' }}
 		>
 			<Grid item>
+				<div>
+					To setup the tracking add the following script to your website:
+				</div>
 				<Typography component="pre">
 					{script}
 				</Typography>

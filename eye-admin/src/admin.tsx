@@ -42,9 +42,8 @@ export default function EyeAdmin() {
         <Admin layout={AdminCustomLayout} disableTelemetry requireAuth authProvider={authProvider}
             dataProvider={dataProvider}
             authCallbackPage={AuthCallback}>
-            <Resource name="domains" list={DomainList} create={() => DomainCreate({ tenantId })} />
+            <Resource name="domains" list={DomainList({ tenantId })} create={() => DomainCreate({ tenantId })} />
             <CustomRoutes>
-                <Route path="/setup" element={<SetupAnaliza tenantId={tenantId} />} />
                 <Route path="/data" element={<iframe
                     title={"Analytics"}
                     src={`${metabaseUrl}/embed/dashboard/` + metabaseToken + "#bordered=true&titled=true"}
