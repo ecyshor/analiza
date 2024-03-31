@@ -3,4 +3,4 @@ start:
 	hugo server
 
 build:
-	hugo
+	hugo --gc --minify
