@@ -6,13 +6,13 @@ module:
   # uncomment line below for local development of module
   # workspace: hugo.work
   imports:
-    path: github.com/StefMa/hugo-fresh
+    - path: github.com/StefMa/hugo-fresh
 
 
 # Disables warnings
 disableKinds:
 - taxonomy
-- taxonomyTerm
+
 markup:
   goldmark:
     renderer:
