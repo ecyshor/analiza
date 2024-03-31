@@ -1,0 +1,2 @@
+# github.com/StefMa/hugo-fresh v1.0.1-0.20240215110848-b863b0d98d76
+# github.com/jgthms/bulma v0.0.0-20220508134905-3e00a8e6d0d0
