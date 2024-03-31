@@ -42,9 +42,8 @@ export default function EyeAdmin() {
         <Admin layout={AdminCustomLayout} disableTelemetry requireAuth authProvider={authProvider}
             dataProvider={dataProvider}
             authCallbackPage={AuthCallback}>
-            <Resource name="domains" list={DomainList({ tenantId })} create={() => DomainCreate({ tenantId })} />
             <CustomRoutes>
-                <Route path="/data" element={<iframe
+                <Route path="/" element={<iframe
                     title={"Analytics"}
                     src={`${metabaseUrl}/embed/dashboard/` + metabaseToken + "#bordered=true&titled=true"}
                     frameBorder={0}
@@ -53,6 +52,7 @@ export default function EyeAdmin() {
                     allowTransparency
                 />} />
             </CustomRoutes>
+            <Resource name="domains" list={DomainList({ tenantId })} create={() => DomainCreate({ tenantId })} />
         </Admin>
     )
 }
