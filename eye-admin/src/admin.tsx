@@ -6,13 +6,12 @@ import { Admin, AuthCallback, CustomRoutes, Resource } from 'react-admin';
 import { Route } from "react-router-dom";
 import { DomainCreate, DomainList } from './domains';
 import { AdminCustomLayout } from './layout';
-import { SetupAnaliza } from './setup';
 
 const auth0 = new Auth0Client({
     domain: process.env.REACT_APP_AUTH0_DOMAIN!,
     clientId: process.env.REACT_APP_AUTH0_CLIENT_ID!,
     cacheLocation: 'localstorage',
-    useRefreshTokens: false,
+    useRefreshTokens: true,
     useRefreshTokensFallback: false,
     authorizationParams: {
         audience: process.env.REACT_APP_AUTH0_AUDIENCE,

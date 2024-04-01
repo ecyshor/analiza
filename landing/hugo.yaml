@@ -110,29 +110,32 @@ params:
     tiles:
     - title: Free tier
       icon: laptop-cloud
-      text: First 10000 page views are free
+      text: First 100.000 page views are free. 
       url: https://app.analiza.dev
       buttonText: Start
     - title: Regular tier
       icon: laptop-cloud
-      text: 10$/year for an extra 100000 yearly page views.
+      text: 9$/year for an extra 1.000.000 yearly page views.
       url: https://app.analiza.dev
       buttonText: Start
     - title: Extra
       icon: laptop-cloud
-      text: If you have more than 110000 yearly page views we charge 10$ extra for each million views.
+      text: If you have more than 1.100.000 yearly page views we charge 7$ extra for each million views.
       url: https://app.analiza.dev
       buttonText: Start
   section2:
-    title: Why us?
-    subtitle: We want to provide a solution for people that don't have advance requirements for tracking on their website and just want a low cost, stable, simple to use solution.
+    title: What we offer
+    subtitle: Privacy first, all the important data you need
     features:
     - title: One line setup
-      text: After you've created your account you'll have a one liner that can be added to your website to start gathering data. No cookies required.
+      text: After you've created your account you'll have a one liner that can be added to your website to start gathering data. 
       # Icon (from /images/illustrations/icons/___.svg)
       icon: laptop-globe
+    - title: Yearly payment
+      text: We check usage per calendar year, so even if you have a very popular month, that's not going to be an issue.
+      icon: mobile-feed
     - title: Low cost, no credit card
-      text: Minimum cost and a free tier to get you started. Pay nothing untill you reach 1000 page views (yearly page view quota).
+      text: Yearly generious free quota, and low cost yearly subscriptions. 
       icon: doc-sync
     - title: Covering all the basic data
       text: Unique users, country origin, referral origin. Check the live demo further down.
@@ -140,7 +143,6 @@ params:
   section3:
     title: Live dashboard for this webpage
     subtitle: To rule them all
-    image: illustrations/mockups/app-mockup.png
     buttonText: Get started
     buttonLink: "#"
   # section4:
