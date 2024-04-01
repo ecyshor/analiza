@@ -111,17 +111,17 @@ params:
     - title: Free tier
       icon: laptop-cloud
       text: First 10000 page views are free
-      url: app.analiza.dev
+      url: https://app.analiza.dev
       buttonText: Start
     - title: Regular tier
       icon: laptop-cloud
       text: 10$/year for an extra 100000 yearly page views.
-      url: app.analiza.dev
+      url: https://app.analiza.dev
       buttonText: Start
     - title: Extra
       icon: laptop-cloud
       text: If you have more than 110000 yearly page views we charge 10$ extra for each million views.
-      url: app.analiza.dev
+      url: https://app.analiza.dev
       buttonText: Start
   section2:
     title: Why us?
