@@ -174,13 +174,13 @@ params:
     socialmediatitle: Follow Us
     # Social media links (GitHub, Twitter, etc.). All are optional.
     socialmedia:
-    - link: https://github.com/StefMa
+    - link: https://github.com/ecyshor/analiza
       # Icons are from Font Awesome
       icon: github
-    - link: https://facebook.com/#
-      icon: facebook
-    - link: https://twitter.com/StefMa91
-      icon: twitter
+    # - link: https://facebook.com/#
+    #   icon: facebook
+    # - link: https://twitter.com/StefMa91
+    #   icon: twitter
     bulmalogo: false
     # quicklinks:
     #   column1:
