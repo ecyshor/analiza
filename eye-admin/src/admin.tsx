@@ -12,7 +12,7 @@ const auth0 = new Auth0Client({
     clientId: process.env.REACT_APP_AUTH0_CLIENT_ID!,
     cacheLocation: 'localstorage',
     useRefreshTokens: true,
-    useRefreshTokensFallback: false,
+    useRefreshTokensFallback: true,
     authorizationParams: {
         audience: process.env.REACT_APP_AUTH0_AUDIENCE,
     },
