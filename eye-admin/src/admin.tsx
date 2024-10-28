@@ -1,5 +1,5 @@
 import { Auth0Client } from '@auth0/auth0-spa-js';
-import postgrestRestProvider from "@promitheus/ra-data-postgrest";
+import postgrestRestProvider, { defaultPrimaryKeys, defaultSchema } from "@raphiniert/ra-data-postgrest";
 import { Auth0AuthProvider, httpClient } from 'ra-auth-auth0';
 import { useEffect, useState } from "react";
 import { Admin, AuthCallback, CustomRoutes, Resource } from 'react-admin';
@@ -19,7 +19,12 @@ const auth0 = new Auth0Client({
 });
 
 const authProvider = Auth0AuthProvider(auth0, {});
-const dataProvider = postgrestRestProvider(process.env.REACT_APP_POSTGREST_URL, httpClient(auth0));
+const dataProvider = postgrestRestProvider({
+    apiUrl: process.env.REACT_APP_POSTGREST_URL!, httpClient: httpClient(auth0),
+    defaultListOp: 'match',
+    primaryKeys: defaultPrimaryKeys,
+    schema: defaultSchema
+});
 const metabaseUrl = process.env.REACT_APP_METABASE_URL
 
 export default function EyeAdmin() {
