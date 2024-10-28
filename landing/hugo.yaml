@@ -1,6 +1,6 @@
 baseURL: https://analiza.dev
 languageCode: en-us
-title: Simple analytics for you website
+title: Simple analytics for your website
 
 module:
   # uncomment line below for local development of module
