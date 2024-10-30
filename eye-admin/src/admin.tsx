@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Admin, AuthCallback, CustomRoutes, Resource } from 'react-admin';
 import { Route } from "react-router-dom";
 import { DomainCreate, DomainList } from './domains';
+import { softLightTheme } from './theme';
 import { AdminCustomLayout } from './layout';
 
 const auth0 = new Auth0Client({
@@ -43,7 +44,11 @@ export default function EyeAdmin() {
     }, [])
     return (
         // used to have real links and not #parts in the browser
-        <Admin layout={AdminCustomLayout} disableTelemetry requireAuth authProvider={authProvider}
+        <Admin layout={AdminCustomLayout}
+            theme={softLightTheme}
+            disableTelemetry
+            requireAuth
+            authProvider={authProvider}
             dataProvider={dataProvider}
             authCallbackPage={AuthCallback}>
             <CustomRoutes>
