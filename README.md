@@ -12,15 +12,24 @@ Data must be owned by 1001
 
 ## Developer Workflows
 
+### Nix setup
+
+The project is configured with direnv and nix to manage all the dependencies.
+Direnv is in the `.envrc` file and the nix setup is in the `nix` directory.
+
+Installation steps can be found in the [direnv and Nix setup guide](https://nicu.dev/dirnev-nix-shell).
+
+### Local dev
+
 - Local dev: Set `*.dev.analiza.lan` domains to `127.0.0.1`. Data dirs must be owned by UID 1001.
 - Build/run: `make start` (Docker Compose), `make clean` (teardown), subfolder Makefiles for service-specific builds.
 - Secrets: `.env.private` for local, Netlify for deploy.
 
 ## Key Files
+
 - `docker-compose.yml`: Service orchestration
 - `Makefile`: Build/run commands
 - See subfolder READMEs for service details.
-
 
 ## Dev
 
