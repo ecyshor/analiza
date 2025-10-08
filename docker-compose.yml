@@ -194,7 +194,7 @@ services:
         max_attempts: 3
         window: 120s
   postgres:
-    image: bitnamilegacy/postgresql:17
+    image: bitnamilegacy/postgresql:15
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
