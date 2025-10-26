@@ -152,7 +152,7 @@ services:
       - "traefik.http.routers.admin.middlewares=cors"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://app.analiza.dev, http://app.dev.analiza.lan, http://localhost:5174"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://app.analiza.dev, http://app.dev.analiza.lan, http://localhost:5174, http://localhost:5175"
       - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors.headers.addvaryheader=true"
   postgrest_flyway:
