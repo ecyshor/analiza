@@ -1,0 +1,12 @@
+services:
+  postgres:
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d/
+      - pgdata:/bitnami/postgresql
+  clickhouse:
+    volumes:
+      - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
+      - chdata:/bitnami/clickhouse
+volumes:
+  pgdata:
+  chdata:

@@ -19,15 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANALIZA_POSTGREST_CONFIG: postgrest/postgrest.basic.conf
+      COMPOSE_ARGS: -f docker-compose.yml -f docker-compose.ci.yml
     steps:
     - uses: actions/checkout@v3
 
     - name: Build postgrest
-      run: docker compose build postgrest
+      run: make build c=postgrest
 
     - name: Run migrations
-      run: docker compose up --abort-on-container-exit postgrest_flyway
+      run: make ci_up_abort c=postgrest_flyway
 
     - name: Show Docker logs on failure
       if: failure()
-      run: docker compose logs
+      run: make logs
