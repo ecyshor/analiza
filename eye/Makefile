@@ -4,4 +4,4 @@ install:
 
 .PHONY: build
 build:
-	go build
+	go build -v -x
