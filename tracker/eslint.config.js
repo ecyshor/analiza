@@ -5,6 +5,7 @@ module.exports = [
   js.configs.recommended,
   {
     languageOptions: {
+      sourceType: 'script',
       globals: {
         ...globals.browser,
       },
