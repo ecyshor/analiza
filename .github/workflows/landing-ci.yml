@@ -1,0 +1,28 @@
+name: Landing CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'landing/**'
+  pull_request:
+    paths:
+      - 'landing/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./landing
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Hugo
+      uses: peaceiris/actions-hugo@v2
+      with:
+        hugo-version: '0.111.3'
+
+    - name: Build
+      run: hugo --gc --minify

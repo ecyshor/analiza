@@ -1,0 +1,31 @@
+name: Eye CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'eye/**'
+  pull_request:
+    paths:
+      - 'eye/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./eye
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.19'
+
+    - name: Install dependencies
+      run: go get
+
+    - name: Build
+      run: go build

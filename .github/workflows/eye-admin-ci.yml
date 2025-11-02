@@ -1,0 +1,39 @@
+name: Eye Admin CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'eye-admin/**'
+  pull_request:
+    paths:
+      - 'eye-admin/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./eye-admin
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'yarn'
+        cache-dependency-path: eye-admin/yarn.lock
+
+    - name: Install dependencies
+      run: yarn
+
+    - name: Build
+      run: yarn build
+
+    - name: Lint
+      run: yarn lint
+
+    - name: Type check
+      run: yarn type-check

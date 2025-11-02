@@ -1,0 +1,25 @@
+name: Postgrest CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'postgrest/**'
+      - 'docker-compose.yml'
+  pull_request:
+    paths:
+      - 'postgrest/**'
+      - 'docker-compose.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build postgrest
+      run: docker compose build postgrest
+
+    - name: Run migrations
+      run: docker compose up --abort-on-container-exit postgrest_flyway
