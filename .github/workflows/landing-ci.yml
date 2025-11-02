@@ -6,9 +6,11 @@ on:
       - main
     paths:
       - 'landing/**'
+      - '.github/workflows/landing-ci.yml'
   pull_request:
     paths:
       - 'landing/**'
+      - '.github/workflows/landing-ci.yml'
 
 jobs:
   build:

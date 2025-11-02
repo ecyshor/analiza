@@ -6,9 +6,11 @@ on:
       - main
     paths:
       - 'tracker/**'
+      - '.github/workflows/tracker-ci.yml'
   pull_request:
     paths:
       - 'tracker/**'
+      - '.github/workflows/tracker-ci.yml'
 
 jobs:
   lint:

@@ -7,10 +7,12 @@ on:
     paths:
       - 'postgrest/**'
       - 'docker-compose.yml'
+      - '.github/workflows/postgrest-ci.yml'
   pull_request:
     paths:
       - 'postgrest/**'
       - 'docker-compose.yml'
+      - '.github/workflows/postgrest-ci.yml'
 
 jobs:
   build:

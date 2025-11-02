@@ -6,9 +6,11 @@ on:
       - main
     paths:
       - 'eye-admin/**'
+      - '.github/workflows/eye-admin-ci.yml'
   pull_request:
     paths:
       - 'eye-admin/**'
+      - '.github/workflows/eye-admin-ci.yml'
 
 jobs:
   build:
