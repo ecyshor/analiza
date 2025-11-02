@@ -1,0 +1,32 @@
+name: Promtail CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'promtail/**'
+      - '.github/workflows/promtail-ci.yml'
+  pull_request:
+    paths:
+      - 'promtail/**'
+      - '.github/workflows/promtail-ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Start and stop promtail
+      run: |
+        export PROMTAIL_CLIENT_URL="http://localhost:3100/loki/api/v1/push"
+        docker compose -f promtail/docker-compose-promtail.yml up -d
+        sleep 5
+        docker compose -f promtail/docker-compose-promtail.yml ps
+        docker compose -f promtail/docker-compose-promtail.yml logs
+        docker compose -f promtail/docker-compose-promtail.yml down
+
+    - name: Show Docker logs on failure
+      if: failure()
+      run: docker compose -f promtail/docker-compose-promtail.yml logs

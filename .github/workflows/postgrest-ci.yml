@@ -27,3 +27,7 @@ jobs:
 
     - name: Run migrations
       run: docker compose up --abort-on-container-exit postgrest_flyway
+
+    - name: Show Docker logs on failure
+      if: failure()
+      run: docker compose logs
