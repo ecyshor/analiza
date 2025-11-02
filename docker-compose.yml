@@ -125,7 +125,7 @@ services:
       timeout: 5s
       retries: 5
   postgrest:
-    image: postgrest/postgrest
+    image: postgrest/postgrest:v14.0
     command:
       - "postgrest"
       - "/config/postgrest.conf"
@@ -172,13 +172,18 @@ services:
   swagger:
     image: swaggerapi/swagger-ui
     environment:
-      API_URL: http://localhost:3001/
+      API_URL: http://admin.dev.analiza.lan/
     deploy:
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.swagger.rule=Host(`openapi.dev.analiza.lan`)"
+      - "traefik.http.routers.swagger.entrypoints=web"
+      - "traefik.port=8080"
   eye_flyway:
     image: flyway/flyway
     command: -url=jdbc:postgresql://postgres:5432/eye_admin -defaultSchema=eye -user=postgres -password=super_secret_password -connectRetries=60 migrate

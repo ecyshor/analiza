@@ -36,3 +36,4 @@ Installation steps can be found in the [direnv and Nix setup guide](https://nicu
 - `api.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work
 - `admin.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work
 - `metabase.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work
+- `openapi.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work

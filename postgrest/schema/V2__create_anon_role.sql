@@ -1,0 +1,3 @@
+CREATE ROLE anon NOLOGIN;
+GRANT USAGE ON SCHEMA api TO anon;
+GRANT anon TO postgrest;

@@ -39,3 +39,5 @@ next-env.d.ts
 .direnv
 *.private
 dist
+.gemini/
+gha-creds-*.json
