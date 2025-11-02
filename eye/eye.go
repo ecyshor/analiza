@@ -40,6 +40,7 @@ type UserEvent struct {
 	Path      string        `json:"p"`
 	Tenant    uuid.UUID     `json:"u"`
 	Referral  string        `json:"r"`
+	LastPage  string        `json:"lp"`
 }
 
 type Event struct {
@@ -57,6 +58,7 @@ type Event struct {
 	UserCountry    string    `json:"user_country"`
 	InsertTime     time.Time `json:"insert_time"`
 	Path           string    `json:"path"`
+	LastPage       string    `json:"last_page"`
 }
 
 type Server struct {
@@ -155,6 +157,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	event.Tenant = userEvent.Tenant
 	event.EventType = userEvent.EventType
 	event.Referral = userEvent.Referral
+	event.LastPage = userEvent.LastPage
 
 	pageUrl, err := url.Parse(userEvent.Path)
 	if err != nil {
@@ -240,7 +243,7 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 			user_agent_table ,
 			user_agent_desktop ,
 			user_country,
-            insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,?, ?)`)
+            insert_time, path, last_page) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,?, ?, ?)`)
 	if err != nil {
 		log.Printf("Error getting ClickHouse batch: %s", err)
 	}
@@ -268,6 +271,7 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 			event.UserCountry,
 			event.InsertTime,
 			event.Path,
+			event.LastPage,
 		)
 		if err != nil {
 			log.Printf("Failed to append batch: %s", err)
@@ -324,6 +328,7 @@ func initTables(c clickhouse.Conn) {
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_table BOOLEAN;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_desktop BOOLEAN;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_country String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS last_page String;
 	`
 	statements := strings.Split(createTable, ";")
 
