@@ -4,18 +4,18 @@
     const scriptEl = document.currentScript;
     const endpoint = scriptEl.getAttribute("hostname") || "https://api.analiza.dev";
     const tenant = scriptEl.getAttribute("tenant");
-    let lastPage = document.referrer;
+    let lastPage = location.href
 
     function view() {
+        lastPage = location.href
         sendEvent({
-            t: "view", p: location.href, u: tenant, r: document.referrer, lp: lastPage
+            t: "view", p: location.href, u: tenant, r: document.referrer
         });
-        lastPage = location.href;
     }
 
     function gone() {
         sendEvent({
-            t: "gone", p: location.href, u: tenant, r: document.referrer, lp: lastPage
+            t: "gone", p: location.href, u: tenant, r: document.referrer
         });
     }
 
