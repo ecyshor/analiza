@@ -58,7 +58,6 @@ export default function EyeAdmin() {
                     frameBorder={0}
                     width={"100%"}
                     height={"100%"}
-                    allowTransparency
                 />} />
             </CustomRoutes>
             <Resource name="domains" list={DomainList({ tenantId })} create={() => DomainCreate({ tenantId })} />

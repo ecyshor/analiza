@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { FC } from 'react';
 
 interface SetupAnalizaProps {
