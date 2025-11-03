@@ -9,24 +9,24 @@ import { softLightTheme } from './theme';
 import { AdminCustomLayout } from './layout';
 
 const auth0 = new Auth0Client({
-    domain: process.env.REACT_APP_AUTH0_DOMAIN!,
-    clientId: process.env.REACT_APP_AUTH0_CLIENT_ID!,
+    domain: import.meta.env.REACT_APP_AUTH0_DOMAIN!,
+    clientId: import.meta.env.REACT_APP_AUTH0_CLIENT_ID!,
     cacheLocation: 'localstorage',
     useRefreshTokens: true,
     useRefreshTokensFallback: true,
     authorizationParams: {
-        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+        audience: import.meta.env.REACT_APP_AUTH0_AUDIENCE,
     },
 });
 
 const authProvider = Auth0AuthProvider(auth0, {});
 const dataProvider = postgrestRestProvider({
-    apiUrl: process.env.REACT_APP_POSTGREST_URL!, httpClient: httpClient(auth0),
+    apiUrl: import.meta.env.REACT_APP_POSTGREST_URL!, httpClient: httpClient(auth0),
     defaultListOp: 'match',
     primaryKeys: defaultPrimaryKeys,
     schema: defaultSchema
 });
-const metabaseUrl = process.env.REACT_APP_METABASE_URL
+const metabaseUrl = import.meta.env.REACT_APP_METABASE_URL
 
 export default function EyeAdmin() {
     const [tenantId, setTenantId] = useState('')
