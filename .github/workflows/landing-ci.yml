@@ -16,8 +16,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: cachix/install-nix-action@v22
+    - uses: actions/checkout@v5
+    - uses: cachix/install-nix-action@v31
 
     - name: Build
       run: nix-shell nix/shell.nix --run "cd landing && hugo --gc --minify"
