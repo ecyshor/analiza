@@ -4,10 +4,8 @@
     const scriptEl = document.currentScript;
     const endpoint = scriptEl.getAttribute("hostname") || "https://api.analiza.dev";
     const tenant = scriptEl.getAttribute("tenant");
-    let lastPage = location.href
 
     function view() {
-        lastPage = location.href
         sendEvent({
             t: "view", p: location.href, u: tenant, r: document.referrer
         });
