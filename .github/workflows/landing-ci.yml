@@ -15,16 +15,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./landing
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set up Hugo
-      uses: peaceiris/actions-hugo@v2
-      with:
-        hugo-version: '0.111.3'
+    - uses: cachix/install-nix-action@v22
 
     - name: Build
-      run: hugo --gc --minify
+      run: nix-shell nix/shell.nix --run "cd landing && hugo --gc --minify"
