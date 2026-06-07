@@ -1,0 +1,67 @@
+name: E2E Playwright Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ANALIZA_POSTGREST_CONFIG: postgrest/postgrest.basic.conf
+      COMPOSE_ARGS: -f docker-compose.yml -f docker-compose.ci.yml
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Start services
+      run: make start_detached
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install eye-admin dependencies
+      working-directory: ./eye-admin
+      run: yarn
+
+    - name: Install Playwright browsers
+      working-directory: ./eye-admin
+      run: npx playwright install --with-deps
+
+    - name: Run eye-admin UI
+      working-directory: ./eye-admin
+      run: yarn dev &
+
+    - name: Run Playwright test
+      working-directory: ./eye-admin
+      run: npx playwright test e2e.spec.ts
+
+    - name: Read tenant ID
+      id: tenant
+      run: echo "::set-output name=id::$(cat eye-admin/tenant_id.txt)"
+
+    - name: Send test event
+      run: |
+        curl -X POST -H "Content-Type: application/json" -H "Host: test.analiza.lan" -d '{"t":"view","p":"/","u":"${{ steps.tenant.outputs.id }}","r":"https://example.com"}' http://localhost/eye
+
+    - name: Verify event in ClickHouse
+      run: |
+        sleep 5 # Wait for the event to be processed
+        RESULT=$(docker compose $COMPOSE_ARGS exec -T clickhouse clickhouse-client -u eye_admin --password eye_super_duper_password -q "SELECT count() FROM eye.events WHERE tenant_id = '${{ steps.tenant.outputs.id }}'")
+        if [ "$RESULT" -ne 1 ]; then
+          echo "Event not found in ClickHouse"
+          docker compose $COMPOSE_ARGS logs eye
+          exit 1
+        fi
+        echo "Event found in ClickHouse"
+
+    - name: Stop services
+      if: always()
+      run: make stop
+
+    - name: Show Docker logs on failure
+      if: failure()
+      run: docker compose $COMPOSE_ARGS logs

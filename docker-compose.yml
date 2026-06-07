@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: "traefik:v2.10"
+    image: "traefik:v2.11"
     labels:
       logging_jobname: "traefik"
     container_name: "traefik"
@@ -14,10 +14,9 @@ services:
       - "--entrypoints.web.proxyProtocol=true"
       - "--entrypoints.web.proxyProtocol.trustedIPs=10.0.0.0/16"
     ports:
-      - "80:80"
-      - "8080:8080"
+      - "8080:80"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock:ro"
 
   eye:
     build:
@@ -49,18 +48,20 @@ services:
       - "traefik.http.middlewares.cors2.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors2.headers.addvaryheader=true"
   clickhouse:
-    image: docker.io/bitnamilegacy/clickhouse:25.7.5
-    #    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
+    image: clickhouse/clickhouse-server:24.8-alpine
     environment:
+      - CLICKHOUSE_USER=eye_admin
+      - CLICKHOUSE_PASSWORD=eye_super_duper_password
       - CLICKHOUSE_ADMIN_USER=eye_admin
       - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     labels:
       - "logging_exclude=true"
     volumes:
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
       - type: bind
         source: ${ANALIZA_DATA_DIR:-/data/analiza}/clickhouse/data
-        target: /bitnami/clickhouse
+        target: /var/lib/clickhouse
     ulimits:
       nofile:
         soft: 262144
@@ -69,7 +70,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "clickhouse client -u $${CLICKHOUSE_ADMIN_USER} --password $${CLICKHOUSE_ADMIN_PASSWORD} -q 'SELECT 1'",
+          "clickhouse-client -u $${CLICKHOUSE_USER} --password $${CLICKHOUSE_PASSWORD} -q 'SELECT 1'",
         ]
       interval: 30s
       timeout: 5s
@@ -134,7 +135,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - type: bind
-        source: $ANALIZA_POSTGREST_CONFIG
+        source: ${ANALIZA_POSTGREST_CONFIG:-./postgrest/postgrest.conf.private}
         target: /config/postgrest.conf
         read_only: true
     deploy:
@@ -199,19 +200,20 @@ services:
         max_attempts: 3
         window: 120s
   postgres:
-    image: bitnamilegacy/postgresql:15
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
-      POSTGRES_DATABASE: postgres
-      POSTGRESQL_EXTRA_FLAGS: "-c log_statement=all"
+      POSTGRES_DB: postgres
+      PGDATA: /var/lib/postgresql/data/18
+    command: ["postgres", "-c", "log_statement=all"]
     labels:
       - "logging_exclude=true"
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d/
       - type: bind
         source: ${ANALIZA_DATA_DIR:-/data/analiza}/postgres/data
-        target: /bitnami/postgresql
+        target: /var/lib/postgresql/data
     deploy:
       restart_policy:
         condition: on-failure

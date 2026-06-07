@@ -19,21 +19,51 @@ Direnv is in the `.envrc` file and the nix setup is in the `nix` directory.
 
 Installation steps can be found in the [direnv and Nix setup guide](https://nicu.dev/dirnev-nix-shell).
 
-### Local dev
+## Local Development & Installation
 
-- Local dev: Set `*.dev.analiza.lan` domains to `127.0.0.1`. Data dirs must be owned by UID 1001.
-- Build/run: `make start` (Docker Compose), `make clean` (teardown), subfolder Makefiles for service-specific builds.
-- Secrets: `.env.private` for local, Netlify for deploy.
+### 1. Hosts Configuration
+For local development, you must update your `/etc/hosts` file with the following domains mapping to `127.0.0.1`:
+```text
+127.0.0.1 api.dev.analiza.lan
+127.0.0.1 admin.dev.analiza.lan
+127.0.0.1 metabase.dev.analiza.lan
+127.0.0.1 openapi.dev.analiza.lan
+```
 
-## Key Files
+### 2. Environment Variables
+Local development relies on the `.env.private` files inside the respective project directories (such as `eye-admin`). These are not checked into Git. Make sure to configure them per the documentation in the subfolders.
 
-- `docker-compose.yml`: Service orchestration
-- `Makefile`: Build/run commands
-- See subfolder READMEs for service details.
+### 3. Build & Run
+To run the complete stack:
+```bash
+# Clean previous containers/volumes if necessary
+make clean
 
-## Dev
+# Build and start all services attached
+make start
 
-- `api.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work
-- `admin.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work
-- `metabase.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work
-- `openapi.dev.analiza.lan` must point to 127.0.0.1 for the local setup to work
+# Or start detached
+make start_detached
+```
+
+### 4. Running End-to-End (E2E) Tests
+
+We use Playwright for robust E2E testing of the `eye-admin` frontend and the Go/PostgREST backends. To avoid triggering Auth0 rate limits and bot protection during automated tests, we provide a **Mocked Authentication** flow.
+
+When the mock is enabled, the frontend bypasses the real Auth0 Universal Login and uses a locally signed dummy JWT token. This token is accepted by the local PostgREST instance running with the test configuration (`postgrest.test.conf`).
+
+**To run the tests locally:**
+```bash
+# 1. Start the backend with the test configuration
+export ANALIZA_POSTGREST_CONFIG=./postgrest/postgrest.test.conf
+make start_detached
+
+# 2. Enter the eye-admin directory
+cd eye-admin
+
+# 3. Install dependencies
+npm install
+
+# 4. Run the Playwright E2E tests using the mock auth wrapper
+npm run test:e2e
+```

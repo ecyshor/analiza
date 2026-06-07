@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: PostgREST API
+  version: 1.0.0
+paths:
+  /domains:
+    get:
+      summary: List domains
+      operationId: getDomains
+      responses:
+        '200':
+          description: A list of domains
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Domain'
+    post:
+      summary: Create a domain
+      operationId: createDomain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainInsert'
+      responses:
+        '201':
+          description: Created
+  /domains?id=eq.{id}:
+    patch:
+      summary: Update a domain
+      operationId: updateDomain
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainInsert'
+      responses:
+        '204':
+          description: No Content
+    delete:
+      summary: Delete a domain
+      operationId: deleteDomain
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: No Content
+components:
+  schemas:
+    Domain:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        domain:
+          type: string
+        created:
+          type: string
+          format: date-time
+    DomainInsert:
+      type: object
+      required:
+        - domain
+      properties:
+        domain:
+          type: string

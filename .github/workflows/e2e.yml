@@ -1,0 +1,67 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: eye-admin/package-lock.json
+
+    - name: Update /etc/hosts
+      run: |
+        sudo echo "127.0.0.1 api.dev.analiza.lan" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 admin.dev.analiza.lan" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 metabase.dev.analiza.lan" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 openapi.dev.analiza.lan" | sudo tee -a /etc/hosts
+
+    - name: Start backend services
+      run: |
+        export ANALIZA_POSTGREST_CONFIG=./postgrest/postgrest.test.conf
+        # Start docker compose detached
+        make start_detached
+
+    - name: Create .env file for E2E
+      working-directory: ./eye-admin
+      run: |
+        cat << 'EOF' > .env
+        VITE_METABASE_URL=http://metabase.dev.analiza.lan:8080
+        VITE_POSTGREST_URL=http://admin.dev.analiza.lan:8080
+        VITE_AUTH0_DOMAIN=eyelytics.eu.auth0.com
+        VITE_AUTH0_CLIENT_ID=tCx2Ro9jepgtHYP3xDDCMqMyEOwwao0W
+        VITE_AUTH0_AUDIENCE=local
+        EOF
+
+    - name: Install dependencies
+      working-directory: ./eye-admin
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      working-directory: ./eye-admin
+      run: npx playwright install --with-deps
+
+    - name: Run Playwright tests
+      working-directory: ./eye-admin
+      env:
+        VITE_E2E_MOCK_AUTH: 'true'
+      run: npx playwright test
+
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: eye-admin/playwright-report/
+        retention-days: 30
