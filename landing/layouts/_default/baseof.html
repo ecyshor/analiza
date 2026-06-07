@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode | default "en-us" }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Site.Title }}</title>
+    <meta name="description" content="{{ .Site.Params.description }}">
+    {{ if .Site.Params.openGraph }}
+    {{ template "_internal/opengraph.html" . }}
+    {{ end }}
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ "favicon.png" | relURL }}">
+    
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+    
+    <!-- Modern Font: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Tracker -->
+    <script src="https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js" tenant="0acee168-10d7-474c-9c07-6922e1d99310"></script>
+</head>
+<body>
+    {{ block "main" . }}{{ end }}
+</body>
+</html>

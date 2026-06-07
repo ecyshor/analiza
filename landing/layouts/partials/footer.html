@@ -1,0 +1,18 @@
+<footer class="footer">
+    <div class="container footer-content">
+        <div class="footer-logo">
+            <img src="{{ printf "/images/%s" .Site.Params.footer.logo | relURL }}" alt="Logo" height="24">
+        </div>
+        <div class="footer-social">
+            <span class="social-title">{{ .Site.Params.footer.socialmediatitle }}</span>
+            {{ range .Site.Params.footer.socialmedia }}
+            <a href="{{ .link }}" class="social-link" target="_blank" rel="noopener noreferrer">
+                {{ .icon }} <!-- Assuming simple text or font awesome integration later, but keeping simple for now -->
+            </a>
+            {{ end }}
+        </div>
+        <div class="footer-copyright">
+            &copy; {{ now.Format "2006" }} Analiza.dev
+        </div>
+    </div>
+</footer>

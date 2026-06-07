@@ -1,0 +1,142 @@
+{{ define "main" }}
+
+<!-- Background Glow Elements -->
+<div class="bg-glow top-glow"></div>
+<div class="bg-glow bottom-glow"></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="container navbar-container">
+        <a href="/" class="brand">
+            {{ if .Site.Params.navbar.logoImage }}
+            <img src="{{ printf "/images/%s" .Site.Params.navbar.logoImage | relURL }}" alt="{{ .Site.Params.navbar.logoText }}" height="40" class="logo-img">
+            {{ else }}
+            {{ .Site.Params.navbar.logoText }}
+            {{ end }}
+        </a>
+        <div class="nav-links">
+            {{ range .Site.Params.navbar.links }}
+            <a href="{{ .url }}" class="nav-link">{{ .title }}</a>
+            {{ end }}
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <span class="badge">{{ .Site.Params.hero.badge }}</span>
+            <h1 class="hero-title">{{ .Site.Params.hero.title }}</h1>
+            <p class="hero-subtitle">{{ .Site.Params.hero.subtitle }}</p>
+            <div class="hero-cta-group">
+                <a href="{{ .Site.Params.hero.cta_primary.url }}" class="btn btn-primary">{{ .Site.Params.hero.cta_primary.text }}</a>
+                <a href="{{ .Site.Params.hero.cta_secondary.url }}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">{{ .Site.Params.hero.cta_secondary.text }}</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Preview (Iframe) -->
+    <section class="dashboard">
+        <div class="container">
+            <div class="section-heading text-center">
+                <h2>{{ .Site.Params.dashboard.title }}</h2>
+                <p>{{ .Site.Params.dashboard.subtitle }}</p>
+            </div>
+            
+            <div class="browser-mockup">
+                <div class="browser-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <div class="browser-address">analiza.dev/dashboard</div>
+                </div>
+                <div class="iframe-wrapper">
+                    <!-- CRITICAL: Keep iframe as requested -->
+                    <iframe
+                        src="https://metabase.analiza.dev/public/dashboard/b206e5af-2c29-4486-aa96-0d269d5096c8"
+                        frameborder="0"
+                        width="100%"
+                        height="900"
+                        allowtransparency
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-heading text-center">
+                <h2>{{ .Site.Params.features.title }}</h2>
+                <p>{{ .Site.Params.features.subtitle }}</p>
+            </div>
+            
+            <div class="features-grid">
+                {{ range .Site.Params.features.items }}
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <!-- We will use simple SVGs based on icon names -->
+                        {{ if eq .icon "cookie" }}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M16 12.5v.01"></path><path d="M12 16v.01"></path><path d="M11 11v.01"></path></svg>
+                        {{ else if eq .icon "shield" }}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        {{ else if eq .icon "zap" }}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        {{ else if eq .icon "code" }}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        {{ end }}
+                    </div>
+                    <h3 class="feature-title">{{ .title }}</h3>
+                    <p class="feature-desc">{{ .description }}</p>
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <div class="section-heading text-center">
+                <h2>{{ .Site.Params.pricing.title }}</h2>
+                <p>{{ .Site.Params.pricing.subtitle }}</p>
+            </div>
+            
+            <div class="pricing-grid">
+                {{ range .Site.Params.pricing.plans }}
+                <div class="pricing-card {{ if .highlight }}highlighted{{ end }}">
+                    <h3 class="pricing-tier">{{ .title }}</h3>
+                    <div class="pricing-cost">
+                        <span class="price">{{ .price }}</span>
+                        <span class="period">{{ .period }}</span>
+                    </div>
+                    <ul class="pricing-features">
+                        {{ range .features }}
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            {{ . }}
+                        </li>
+                        {{ end }}
+                    </ul>
+                    <a href="{{ .url }}" class="btn {{ if .highlight }}btn-primary{{ else }}btn-secondary{{ end }} btn-block">{{ .cta }}</a>
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container footer-container">
+        <div class="copyright">&copy; {{ .Site.Params.footer.copyright }}</div>
+        <div class="socials">
+            {{ range .Site.Params.footer.socials }}
+            <a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .platform }}</a>
+            {{ end }}
+        </div>
+    </div>
+</footer>
+
+{{ end }}

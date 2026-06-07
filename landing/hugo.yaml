@@ -1,17 +1,10 @@
 baseURL: https://analiza.dev
 languageCode: en-us
-title: Simple analytics for your website
-
-module:
-  # uncomment line below for local development of module
-  # workspace: hugo.work
-  imports:
-    - path: github.com/StefMa/hugo-fresh
-
+title: Analiza | Privacy-First Analytics
 
 # Disables warnings
 disableKinds:
-- taxonomy
+  - taxonomy
 
 markup:
   goldmark:
@@ -19,198 +12,85 @@ markup:
       unsafe: true # Allows you to write raw html in your md files
 
 params:
-  # Open graph allows easy social sharing. If you don't want it you can set it to false or just delete the variable
   openGraph: true
-  # Used as meta data; describe your site to make Google Bots happy
-  description: Simple, cheap, privacy first website analytics
-  # Preloader ensures images are loaded before displaying to the user. If you don't want it uncomment to set it to false
-  # preloader: false
-  navbarlogo:
-  # Logo (from static/images/logos/___)
-    image: logos/svg/logo-no-background.svg
-    link: /
-    # Default width/height. Uncomment if you need to change
-    # width: 112
-    # height: 28
-  font:
-    name: "Open Sans"
-    sizes: [400,600]
-  hero:
-    # Main hero title
-    title: Simple. Privacy focused. Easy to use. Low cost. No cookies.
-    # Hero subtitle (optional)
-    subtitle: Made for projects that care about the basic visitor analytics on their website. Complies with the EU GDPR with a focus on privacy.
-    # Button text
-    buttontext: Get started
-    # Where the main hero button links to
-    buttonlink: "https://app.analiza.dev"
-    # Hero image (from static/images/___)
-    image: illustrations/worker.svg
-    # Footer logos (from static/images/logos/clients/*.svg)
-    # urls are optional
-    # clientlogos:
-    # - logo: systek
-    #   url: https://google.com
-  # Customizable navbar. For a dropdown, add a "sublinks" list.
+  description: Analytics that respect your users. Simple, privacy-first, and lightning fast.
+  
   navbar:
-  # - title: Features
-  #   url: /
-  # - title: Pricing
-  #   url: /
-  # - title: Dropdown
-  #   sublinks:
-  #   - title: Dropdown item
-  #     url: /
-  #   - title: Dropdown item
-  #     url: /
-  #   - title: Dropdown item
-  #     url: /
-  - title: Analiza
-    url: https://app.analiza.dev
-  # - title: Sign up
-  #   url: /
-  #   button: true
-  # sidebar:
-  #   # Logo (from /images/logos/___.svg)
-  #   logo: logo-color
-  #   sections:
-  #   - title: User
-  #     icon: user
-  #     links:
-  #     - text: Profile
-  #       url: /
-  #     - text: Account
-  #       url: /
-  #     - text: Settings
-  #       url: /
-  #   - title: Messages
-  #     icon: envelope
-  #     links:
-  #     - text: Inbox
-  #       url: /
-  #     - text: Compose
-  #       url: /
-  #   - title: Images
-  #     icon: image
-  #     links:
-  #     - text: Library
-  #       url: /
-  #     - text: Upload
-  #       url: /
-  #   - title: Settings
-  #     icon: cog
-  #     links:
-  #     - text: User settings
-  #       url: /
-  #     - text: App settings
-  #       url: /
-  section1:
-    title: Pricing
-    subtitle: Pay nothing in advance, no credit card required during sign-up. We measure cost per page view on a yearly basis.
-    tiles:
-    - title: Free tier
-      icon: laptop-cloud
-      text: First 100.000 page views are free. 
-      url: https://app.analiza.dev
-      buttonText: Start
-    - title: Regular tier
-      icon: laptop-cloud
-      text: 9$/year for an extra 1.000.000 yearly page views.
-      url: https://app.analiza.dev
-      buttonText: Start
-    - title: Extra
-      icon: laptop-cloud
-      text: 7$ extra for each million views.
-      url: https://app.analiza.dev
-      buttonText: Start
-  section2:
-    title: What we offer
-    subtitle: Privacy first, all the important data you need
-    features:
-    - title: One line setup
-      text: After you've created your account you'll have a one liner that can be added to your website to start gathering data. 
-      # Icon (from /images/illustrations/icons/___.svg)
-      icon: laptop-globe
-    - title: Yearly payment
-      text: We check usage per calendar year, so even if you have a very popular month, that's not going to be an issue.
-      icon: mobile-feed
-    - title: Low cost, no credit card
-      text: Yearly generious free quota, and low cost yearly subscriptions. 
-      icon: doc-sync
-    - title: Covering all the basic data
-      text: Unique users, country origin, referral origin. Check the live demo further down.
-      icon: mobile-feed
-  section3:
-    title: Live dashboard for this webpage
-    subtitle: Same dashboard as you will see
-    buttonText: Get started
-    buttonLink: "#"
-  # section4:
-  #   title: Pricing
-  #   subtitle: Pay nothing in advance, no credit card required during sign-up
-  #   clients:
-  #   - name: 
-  #     quote: Lorem ipsum dolor sit amet, elit deleniti dissentias quo eu, hinc minim appetere te usu, ea case duis scribentur has. Duo te consequat elaboraret, has quando suavitate at.
-  #     job: Accountant
-  #     img: 1
-  #   - name: John Bradley
-  #     quote: Lorem ipsum dolor sit amet, elit deleniti dissentias quo eu, hinc minim appetere te usu, ea case duis scribentur has. Duo te consequat elaboraret, has quando suavitate at.
-  #     job: Financial Analyst
-  #     img: 2
-  #   - name: Gary Blackman
-  #     quote: Lorem ipsum dolor sit amet, elit deleniti dissentias quo eu, hinc minim appetere te usu, ea case duis scribentur has. Duo te consequat elaboraret, has quando suavitate at.
-  #     job: HR Manager
-  #     img: 3
-  section5:
-    title: Drop us a line or two
-    subtitle: We'd love to hear from you
-    buttonText: Send Message
-    action: https://formspree.io/f/xnqegbkw
-    method: POST
+    logoText: "Analiza"
+    logoImage: "logos/analiza-logo-simple.png"
+    links:
+      - title: Analiza App
+        url: https://app.analiza.dev
+
+  hero:
+    badge: "v2.0 is Live"
+    title: "Analytics that respect your users."
+    subtitle: "Simple, privacy-first, and lightning fast. Comply with GDPR effortlessly without sacrificing the insights you need to grow."
+    cta_primary:
+      text: "Start for Free"
+      url: "https://app.analiza.dev"
+    cta_secondary:
+      text: "View Source"
+      url: "https://github.com/ecyshor/analiza"
+
+  features:
+    title: "Everything you need, nothing you don't."
+    subtitle: "Built from the ground up to be lightweight and respectful."
+    items:
+      - title: No Cookies
+        icon: "cookie"
+        description: "We don't use cookies and we don't track users across devices. Your visitors' privacy is guaranteed."
+      - title: GDPR Compliant
+        icon: "shield"
+        description: "All data is anonymized and stored securely in the EU. No need for annoying cookie banners."
+      - title: Lightweight Tracker
+        icon: "zap"
+        description: "Our tracking script is incredibly small, ensuring your website load times remain lightning fast."
+      - title: Open Source
+        icon: "code"
+        description: "Verify our claims yourself. The code is open source and available for anyone to inspect."
+
+  dashboard:
+    title: "See it in action."
+    subtitle: "This very website's live analytics."
+
+  pricing:
+    title: "Simple, transparent pricing."
+    subtitle: "Start for free, scale as you grow. No credit card required."
+    plans:
+      - title: "Free Tier"
+        price: "$0"
+        period: "forever"
+        features:
+          - "Up to 100k pageviews / mo"
+          - "100% Data Ownership"
+          - "Community Support"
+        cta: "Get Started"
+        url: "https://app.analiza.dev"
+        highlight: false
+      - title: "Standard"
+        price: "$9"
+        period: "per year"
+        features:
+          - "Up to 1M pageviews / year"
+          - "100% Data Ownership"
+          - "Email Support"
+        cta: "Upgrade Now"
+        url: "https://app.analiza.dev"
+        highlight: true
+      - title: "Scale"
+        price: "$7"
+        period: "per extra million"
+        features:
+          - "Pay as you grow"
+          - "100% Data Ownership"
+          - "Priority Support"
+        cta: "Contact Us"
+        url: "mailto:support@analiza.dev"
+        highlight: false
+
   footer:
-    # Logo (from /images/logos/___)
-    logo: svg/logo-no-background.svg
-    # Social Media Title
-    socialmediatitle: Follow Us
-    # Social media links (GitHub, Twitter, etc.). All are optional.
-    socialmedia:
-    - link: https://github.com/ecyshor/analiza
-      # Icons are from Font Awesome
-      icon: github
-    # - link: https://facebook.com/#
-    #   icon: facebook
-    # - link: https://twitter.com/StefMa91
-    #   icon: twitter
-    bulmalogo: false
-    # quicklinks:
-    #   column1:
-    #     title: "Product"
-    #     links:
-    #     - text: Discover features
-    #       link: /
-    #     - text: Why choose our product?
-    #       link: /
-    #     - text: Compare features
-    #       link: /
-    #     - text: Our roadmap
-    #       link: /
-    #     - text: AGB
-    #       link: /agb
-      # column2:
-      #   title: "Docs"
-      #   links:
-      #   - text: Get started
-      #     link: /
-      #   - text: User guides
-      #     link: /
-      #   - text: Admin guide
-      #     link: /
-      #   - text: Developers
-      #     link: /
-      # column3:
-      #   title: "Blog"
-      #   links:
-      #   - text: Latest news
-      #     link: /blog/first
-      #   - text: Tech articles
-      #     link: /blog/second
+    copyright: "2026 Analiza.dev"
+    socials:
+      - platform: "GitHub"
+        url: "https://github.com/ecyshor/analiza"
