@@ -23,9 +23,9 @@ params:
         url: https://app.analiza.dev
 
   hero:
-    badge: "v2.0 is Live"
+    badge: "🇪🇺 Proudly Hosted in the EU"
     title: "Analytics that respect your users."
-    subtitle: "Simple, privacy-first, and lightning fast. Comply with GDPR effortlessly without sacrificing the insights you need to grow."
+    subtitle: "Simple, privacy-first, and lightning fast. Your data is 100% hosted and processed in the EU, ensuring effortless GDPR compliance without sacrificing insights."
     cta_primary:
       text: "Start for Free"
       url: "https://app.analiza.dev"
@@ -40,9 +40,9 @@ params:
       - title: No Cookies
         icon: "cookie"
         description: "We don't use cookies and we don't track users across devices. Your visitors' privacy is guaranteed."
-      - title: GDPR Compliant
+      - title: EU Hosted & GDPR Compliant
         icon: "shield"
-        description: "All data is anonymized and stored securely in the EU. No need for annoying cookie banners."
+        description: "We guarantee that 100% of your data never leaves the European Union. Fully anonymized, strictly compliant, and with zero annoying cookie banners."
       - title: Lightweight Tracker
         icon: "zap"
         description: "Our tracking script is incredibly small, ensuring your website load times remain lightning fast."
