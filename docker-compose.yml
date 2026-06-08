@@ -133,7 +133,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - type: bind
-        source: ${ANALIZA_POSTGREST_CONFIG:-./postgrest/postgrest.conf.private}
+        source: ${ANALIZA_POSTGREST_CONFIG:-./postgrest/postgrest.basic.conf}
         target: /config/postgrest.conf
         read_only: true
     deploy:

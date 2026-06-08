@@ -1,18 +1,23 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 
 export function Login() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0()
+  const location = useLocation()
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      loginWithRedirect()
+      const from = location.state?.from;
+      const returnTo = from ? `${from.pathname}${from.search}${from.hash}` : '/';
+      loginWithRedirect({ appState: { returnTo } })
     }
-  }, [isLoading, isAuthenticated, loginWithRedirect])
+  }, [isLoading, isAuthenticated, loginWithRedirect, location])
 
   if (isAuthenticated) {
-    return <Navigate to="/" />
+    const from = location.state?.from;
+    const returnTo = from ? `${from.pathname}${from.search}${from.hash}` : '/';
+    return <Navigate to={returnTo} replace />
   }
 
   return (
