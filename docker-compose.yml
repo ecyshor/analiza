@@ -205,7 +205,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
       POSTGRES_DB: postgres
-      PGDATA: /var/lib/postgresql/data/18
+      PGDATA: /var/lib/postgresql/data/data
     command: ["postgres", "-c", "log_statement=all"]
     labels:
       - "logging_exclude=true"
