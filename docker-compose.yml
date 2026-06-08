@@ -47,21 +47,19 @@ services:
       - "traefik.http.middlewares.cors2.headers.accesscontrolalloworiginlist=*"
       - "traefik.http.middlewares.cors2.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors2.headers.addvaryheader=true"
-  clickhouse:
-    image: clickhouse/clickhouse-server:24.8-alpine
+ clickhouse:
+    image: docker.io/bitnamilegacy/clickhouse:25.7.5
+    #    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
     environment:
-      - CLICKHOUSE_USER=eye_admin
-      - CLICKHOUSE_PASSWORD=eye_super_duper_password
       - CLICKHOUSE_ADMIN_USER=eye_admin
       - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
-      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     labels:
       - "logging_exclude=true"
     volumes:
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
       - type: bind
         source: ${ANALIZA_DATA_DIR:-/data/analiza}/clickhouse/data
-        target: /var/lib/clickhouse
+        target: /bitnami/clickhouse
     ulimits:
       nofile:
         soft: 262144
@@ -70,7 +68,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "clickhouse-client -u $${CLICKHOUSE_USER} --password $${CLICKHOUSE_PASSWORD} -q 'SELECT 1'",
+          "clickhouse client -u $${CLICKHOUSE_ADMIN_USER} --password $${CLICKHOUSE_ADMIN_PASSWORD} -q 'SELECT 1'",
         ]
       interval: 30s
       timeout: 5s
