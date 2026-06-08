@@ -200,7 +200,7 @@ services:
         max_attempts: 3
         window: 120s
   postgres:
-    image: postgres:18-alpine
+    image: postgres:15-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
