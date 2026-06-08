@@ -47,7 +47,7 @@ services:
       - "traefik.http.middlewares.cors2.headers.accesscontrolalloworiginlist=*"
       - "traefik.http.middlewares.cors2.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors2.headers.addvaryheader=true"
- clickhouse:
+  clickhouse:
     image: docker.io/bitnamilegacy/clickhouse:25.7.5
     #    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
     environment:
