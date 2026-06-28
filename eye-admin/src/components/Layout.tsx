@@ -11,7 +11,7 @@ export function Layout() {
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md flex flex-col">
         <div className="p-4 border-b flex items-center justify-center">
-          <img src="/logo.png" alt="Analiza" className="h-8" />
+          <img src="/logo-with-text.png" alt="Analiza" className="h-8" />
         </div>
 
         <nav className="flex-1 p-4 space-y-2">

@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 
-const METABASE_URL = import.meta.env.REACT_APP_METABASE_URL || 'http://metabase.dev.analiza.lan'
+const METABASE_URL = import.meta.env.VITE_METABASE_URL || import.meta.env.REACT_APP_METABASE_URL || 'http://metabase.dev.analiza.lan'
 
 export function Dashboard() {
   const { getIdTokenClaims } = useAuth0()

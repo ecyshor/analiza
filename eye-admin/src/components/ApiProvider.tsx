@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { client } from '../api/client.gen'
 
-const POSTGREST_URL = import.meta.env.REACT_APP_POSTGREST_URL || 'http://admin.dev.analiza.lan'
+const POSTGREST_URL = import.meta.env.VITE_POSTGREST_URL || import.meta.env.REACT_APP_POSTGREST_URL || 'http://admin.dev.analiza.lan'
 
 export function ApiProvider({ children }: { children: React.ReactNode }) {
   const { getAccessTokenSilently } = useAuth0()

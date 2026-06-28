@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getDomains, createDomain, deleteDomain, updateDomain } from '../api'
 
 export function Domains() {
   const queryClient = useQueryClient()
   const [newDomain, setNewDomain] = useState('')
+  const [expandedDomain, setExpandedDomain] = useState<string | null>(null)
 
   const { data: domains, isLoading, error: queryError } = useQuery({
     queryKey: ['domains'],
@@ -122,25 +123,54 @@ export function Domains() {
               </tr>
             ) : (
               domains.map((domain) => (
-                <tr key={domain.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {domain.domain}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Active
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button 
-                      onClick={() => deleteMutation.mutate(domain.id as string)}
-                      disabled={deleteMutation.isPending}
-                      className="ml-4 text-red-600 hover:text-red-900 disabled:opacity-50"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+                <React.Fragment key={domain.id}>
+                  <tr>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {domain.domain}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Active
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() => setExpandedDomain(expandedDomain === domain.id ? null : (domain.id as string))}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        Install Snippet
+                      </button>
+                      <button 
+                        onClick={() => deleteMutation.mutate(domain.id as string)}
+                        disabled={deleteMutation.isPending}
+                        className="ml-4 text-red-600 hover:text-red-900 disabled:opacity-50"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedDomain === domain.id && (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                        <div className="p-4 bg-gray-800 rounded-md shadow-inner text-gray-100 font-mono text-sm overflow-x-auto relative group">
+                          <p className="text-gray-400 mb-2 text-xs uppercase tracking-wide">Add this snippet to the &lt;head&gt; of your website</p>
+                          <code>
+                            &lt;script defer data-domain="{domain.domain}" src="https://analiza.dev/js/script.js"&gt;&lt;/script&gt;
+                          </code>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(`<script defer data-domain="${domain.domain}" src="https://analiza.dev/js/script.js"></script>`)}
+                            className="absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Copy to clipboard"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))
             )}
           </tbody>
