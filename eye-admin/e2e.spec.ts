@@ -16,7 +16,7 @@ test('Load app, check dashboard, create and validate domain', async ({ page }) =
   await expect(page.locator('h1:has-text("Domains")')).toBeVisible();
 
   // Fill in the domain form
-  const testDomain = `test-${Date.now()}.analiza.lan`;
+  const testDomain = `test.analiza.lan`;
   await page.locator('input[placeholder="example.com"]').fill(testDomain);
   await page.getByRole('button', { name: 'Add Domain' }).click();
 
