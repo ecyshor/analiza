@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react'
 import { Layout } from './components/Layout'
@@ -17,7 +18,7 @@ if (!domain || !clientId) {
 	throw new Error('Auth0 domain and client ID not set in environment variables')
 }
 
-function Auth0ProviderWithNavigate({ children }: { children: React.ReactNode }) {
+function Auth0ProviderWithNavigate({ children }: { children: ReactNode }) {
 	const navigate = useNavigate()
 
 	const onRedirectCallback = (appState: any) => {
@@ -40,7 +41,7 @@ function Auth0ProviderWithNavigate({ children }: { children: React.ReactNode }) 
 	)
 }
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+function ProtectedRoute({ children }: { children: ReactNode }) {
 	const { isAuthenticated, isLoading } = useAuth0()
 	const location = useLocation()
 
