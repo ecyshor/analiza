@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      ANALIZA_POSTGREST_CONFIG: postgrest/postgrest.basic.conf
+      ANALIZA_POSTGREST_CONFIG: postgrest/postgrest.test.conf
       COMPOSE_ARGS: -f docker-compose.yml -f docker-compose.ci.yml
     steps:
     - uses: actions/checkout@v4

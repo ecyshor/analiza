@@ -70,9 +70,10 @@ services:
           "CMD-SHELL",
           "clickhouse client -u $${CLICKHOUSE_ADMIN_USER} --password $${CLICKHOUSE_ADMIN_PASSWORD} -q 'SELECT 1'",
         ]
-      interval: 30s
+      interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 20
+      start_period: 30s
     deploy:
       restart_policy:
         condition: on-failure
