@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getDomains, createDomain, deleteDomain, updateDomain } from '../api'
+import { getDomains, createDomain, deleteDomain } from '../api'
 
 export function Domains() {
   const queryClient = useQueryClient()
@@ -155,7 +155,7 @@ export function Domains() {
                         <div className="p-4 bg-gray-800 rounded-md shadow-inner text-gray-100 font-mono text-sm overflow-x-auto relative group">
                           <p className="text-gray-400 mb-2 text-xs uppercase tracking-wide">Add this snippet to the &lt;head&gt; of your website</p>
                           <code>
-                            &lt;script defer data-domain="{domain.domain}" src="https://analiza.dev/js/script.js"&gt;&lt;/script&gt;
+                            &lt;script defer data-domain=&quot;{domain.domain}&quot; src=&quot;https://analiza.dev/js/script.js&quot;&gt;&lt;/script&gt;
                           </code>
                           <button
                             onClick={() => navigator.clipboard.writeText(`<script defer data-domain="${domain.domain}" src="https://analiza.dev/js/script.js"></script>`)}

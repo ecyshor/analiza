@@ -2,6 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Link, Outlet } from 'react-router-dom'
 import { LayoutDashboard, Globe, LogOut } from 'lucide-react'
 import clsx from 'clsx'
+import type { ReactNode } from 'react'
 
 export function Layout() {
   const { logout, user } = useAuth0()
@@ -49,7 +50,7 @@ export function Layout() {
   )
 }
 
-function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+function NavLink({ to, icon, label }: { to: string; icon: ReactNode; label: string }) {
   return (
     <Link
       to={to}

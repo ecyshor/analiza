@@ -8,6 +8,7 @@ module.exports = {
     ],
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"],
+    "ignorePatterns": ["src/api/**/*"],
     "env": {
         "browser": true,
         "es2021": true
