@@ -21,7 +21,7 @@ jobs:
       ANALIZA_POSTGREST_CONFIG: postgrest/postgrest.basic.conf
       COMPOSE_ARGS: -f docker-compose.yml -f docker-compose.ci.yml
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Build postgrest
       run: make build c=postgrest

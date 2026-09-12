@@ -13,15 +13,15 @@ jobs:
       ANALIZA_POSTGREST_CONFIG: postgrest/postgrest.basic.conf
       COMPOSE_ARGS: -f docker-compose.yml -f docker-compose.ci.yml
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Start services
       run: make start_detached
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '22'
 
     - name: Install eye-admin dependencies
       working-directory: ./eye-admin
