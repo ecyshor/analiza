@@ -18,6 +18,13 @@ jobs:
     - name: Start services
       run: make start_detached
 
+    - name: Update /etc/hosts
+      run: |
+        sudo echo "127.0.0.1 api.dev.analiza.lan" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 admin.dev.analiza.lan" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 metabase.dev.analiza.lan" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 openapi.dev.analiza.lan" | sudo tee -a /etc/hosts
+
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
@@ -31,6 +38,17 @@ jobs:
       working-directory: ./eye-admin
       run: npx playwright install --with-deps
 
+    - name: Create .env file for E2E
+      working-directory: ./eye-admin
+      run: |
+        cat << 'EOF' > .env
+        VITE_METABASE_URL=http://metabase.dev.analiza.lan:8080
+        VITE_POSTGREST_URL=http://admin.dev.analiza.lan:8080
+        VITE_AUTH0_DOMAIN=eyelytics.eu.auth0.com
+        VITE_AUTH0_CLIENT_ID=tCx2Ro9jepgtHYP3xDDCMqMyEOwwao0W
+        VITE_AUTH0_AUDIENCE=local
+        EOF
+
     - name: Run eye-admin UI
       working-directory: ./eye-admin
       env:
@@ -43,7 +61,7 @@ jobs:
 
     - name: Read tenant ID
       id: tenant
-      run: echo "::set-output name=id::$(cat eye-admin/tenant_id.txt)"
+      run: echo "::set-output name=id::123e4567-e89b-12d3-a456-426614174000"
 
     - name: Send test event
       run: |

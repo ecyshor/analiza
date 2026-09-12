@@ -10,6 +10,8 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      COMPOSE_ARGS: -f docker-compose.yml -f docker-compose.ci.yml
 
     steps:
     - uses: actions/checkout@v4
