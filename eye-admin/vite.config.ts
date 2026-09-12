@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
     return {
         plugins: [react()],
-        envPrefix: 'REACT_APP',
+        envPrefix: ['VITE_', 'REACT_APP_'],
         server: {
             host: true,
             port: 5174
