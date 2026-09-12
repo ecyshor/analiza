@@ -65,7 +65,7 @@ jobs:
 
     - name: Send test event
       run: |
-        curl -X POST -H "Content-Type: application/json" -H "Host: test.analiza.lan" -d '{"t":"view","p":"/","u":"${{ steps.tenant.outputs.id }}","r":"https://example.com"}' http://localhost/eye
+        curl -X POST -H "Content-Type: application/json" -H "Host: test.analiza.lan" -d '{"t":"view","p":"/","u":"123e4567-e89b-12d3-a456-426614174000","r":"https://example.com"}' http://localhost:8080/eye
 
     - name: Verify event in ClickHouse
       run: |
