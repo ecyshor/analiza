@@ -56,7 +56,7 @@ params:
 
   pricing:
     title: "Simple, transparent pricing."
-    subtitle: "Start for free, scale as you grow. No credit card required."
+    subtitle: "Start for free and only pay after you use up your free tier. No credit card required."
     plans:
       - title: "Free Tier"
         price: "$0"

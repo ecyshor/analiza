@@ -155,10 +155,10 @@ export function Domains() {
                         <div className="p-4 bg-gray-800 rounded-md shadow-inner text-gray-100 font-mono text-sm overflow-x-auto relative group">
                           <p className="text-gray-400 mb-2 text-xs uppercase tracking-wide">Add this snippet to the &lt;head&gt; of your website</p>
                           <code>
-                            &lt;script defer data-domain=&quot;{domain.domain}&quot; src=&quot;https://analiza.dev/js/script.js&quot;&gt;&lt;/script&gt;
+                            &lt;script defer data-domain=&quot;{domain.domain}&quot; src=&quot;{import.meta.env.VITE_TRACKER_URL || import.meta.env.REACT_APP_TRACKER_URL || 'https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js'}&quot;&gt;&lt;/script&gt;
                           </code>
                           <button
-                            onClick={() => navigator.clipboard.writeText(`<script defer data-domain="${domain.domain}" src="https://analiza.dev/js/script.js"></script>`)}
+                            onClick={() => navigator.clipboard.writeText(`<script defer data-domain="${domain.domain}" src="${import.meta.env.VITE_TRACKER_URL || import.meta.env.REACT_APP_TRACKER_URL || 'https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js'}"></script>`)}
                             className="absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                             title="Copy to clipboard"
                           >
