@@ -5,9 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ .Site.Title }}</title>
     <meta name="description" content="{{ .Site.Params.description }}">
+    {{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
+    <link rel="canonical" href="{{ .Permalink | default .Site.BaseURL }}">
+    <meta name="robots" content="index, follow">
     {{ if .Site.Params.openGraph }}
     {{ template "_internal/opengraph.html" . }}
+    {{ template "_internal/twitter_cards.html" . }}
     {{ end }}
+    
+    <!-- Schema.org JSON-LD for AI Search Optimization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Analiza",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "{{ .Site.Params.description }}",
+      "url": "{{ .Site.BaseURL }}",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Free tier available or low cost for high traffic."
+      },
+      "featureList": [
+        "EU Hosted",
+        "GDPR Compliant",
+        "No Cookie",
+        "Basic Analytics"
+      ]
+    }
+    </script>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ "favicon.png" | relURL }}">
     

@@ -1,6 +1,6 @@
 baseURL: https://analiza.dev
 languageCode: en-us
-title: Analiza | Privacy-First Analytics
+title: Analiza | EU Hosted, GDPR Compliant, No Cookie Basic Analytics
 
 # Disables warnings
 disableKinds:
@@ -13,7 +13,8 @@ markup:
 
 params:
   openGraph: true
-  description: Analytics that respect your users. Simple, privacy-first, and lightning fast.
+  description: Analiza is an EU hosted, GDPR compliant, no cookie basic analytics platform. Try it for free or at a low cost.
+  keywords: "EU hosted analytics, GDPR compliant analytics, no cookie analytics, basic analytics, free analytics, low cost analytics, privacy-first analytics"
   
   navbar:
     logoText: "Analiza"
