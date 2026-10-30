@@ -7,6 +7,7 @@ import { Domains } from './pages/Domains'
 import { Login } from './pages/Login'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ApiProvider } from './components/ApiProvider'
+import { FullScreenLoader } from './components/FullScreenLoader'
 
 const queryClient = new QueryClient()
 
@@ -46,7 +47,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 	const location = useLocation()
 
 	if (isLoading) {
-		return <div className="flex items-center justify-center h-screen">Loading...</div>
+		return <FullScreenLoader message="Loading..." />
 	}
 
 	if (!isAuthenticated) {
@@ -60,7 +61,7 @@ function AppRoutes() {
 	const { isLoading } = useAuth0()
 
 	if (isLoading) {
-		return <div className="flex items-center justify-center h-screen">Loading application...</div>
+		return <FullScreenLoader message="Loading application..." />
 	}
 
 	return (
@@ -77,7 +78,7 @@ function AppRoutes() {
 				<Route index element={<Dashboard />} />
 				<Route path="domains" element={<Domains />} />
 			</Route>
-			<Route path="/auth-callback" element={<div className="flex items-center justify-center h-screen">Authenticating...</div>} />
+			<Route path="/auth-callback" element={<FullScreenLoader message="Authenticating..." />} />
 		</Routes>
 	)
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Plus, Globe, Code, Trash2, Copy, Check, AlertCircle } from 'lucide-react'
 import { getDomains, createDomain, deleteDomain } from '../api'
 
 const TRACKER_URL = import.meta.env.VITE_TRACKER_URL || import.meta.env.REACT_APP_TRACKER_URL || 'https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js'
@@ -12,6 +13,7 @@ export function Domains() {
   const queryClient = useQueryClient()
   const [newDomain, setNewDomain] = useState('')
   const [expandedDomain, setExpandedDomain] = useState<string | null>(null)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const { data: domains, isLoading, error: queryError } = useQuery({
     queryKey: ['domains'],
@@ -56,131 +58,157 @@ export function Domains() {
     }
   }
 
+  const handleCopy = async (domainId: string | undefined, tenantId: string | undefined) => {
+    await navigator.clipboard.writeText(installSnippet(tenantId))
+    setCopiedId(domainId ?? null)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
   const anyError = queryError || addMutation.error || deleteMutation.error
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Domains</h1>
+    <div className="max-w-5xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-100">Domains</h1>
+        <p className="mt-1 text-sm text-slate-400">Websites allowed to send analytics events.</p>
       </div>
 
       {anyError && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">
-                {anyError.message}
-              </p>
-            </div>
-          </div>
+        <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+          <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-400" />
+          <p>{anyError.message}</p>
         </div>
       )}
 
-      <div className="bg-white shadow rounded-lg overflow-hidden p-6 border border-gray-200">
-        <form onSubmit={handleAdd} className="flex gap-4 mb-6">
-          <input
-            type="text"
-            placeholder="example.com"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={newDomain}
-            onChange={(e) => setNewDomain(e.target.value)}
-            disabled={addMutation.isPending}
-          />
-          <button 
-            type="submit" 
+      <div className="rounded-xl border border-white/10 bg-slate-900/60 p-5">
+        <form onSubmit={handleAdd} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <div className="flex-1">
+            <label htmlFor="new-domain" className="mb-1.5 block text-sm font-medium text-slate-300">
+              New domain
+            </label>
+            <input
+              id="new-domain"
+              type="text"
+              placeholder="example.com"
+              className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-4 py-2 text-slate-100 placeholder:text-slate-500 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+              value={newDomain}
+              onChange={(e) => setNewDomain(e.target.value)}
+              disabled={addMutation.isPending}
+            />
+          </div>
+          <button
+            type="submit"
             disabled={addMutation.isPending || !newDomain.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/60 disabled:opacity-50"
           >
+            <Plus className="h-4 w-4" />
             {addMutation.isPending ? 'Adding...' : 'Add Domain'}
           </button>
         </form>
+      </div>
 
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Domain
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {isLoading ? (
+      <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/60">
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="bg-white/5 text-xs uppercase tracking-wide text-slate-400">
               <tr>
-                <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">
-                  Loading domains...
-                </td>
+                <th className="px-6 py-3 text-left font-medium">Domain</th>
+                <th className="hidden px-6 py-3 text-left font-medium sm:table-cell">Status</th>
+                <th className="px-6 py-3 text-right font-medium">Actions</th>
               </tr>
-            ) : !domains || domains.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">
-                  No domains found. Add one to get started.
-                </td>
-              </tr>
-            ) : (
-              domains.map((domain) => (
-                <React.Fragment key={domain.id}>
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {domain.domain}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Active
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => setExpandedDomain(expandedDomain === domain.id ? null : (domain.id as string))}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        Install Snippet
-                      </button>
-                      <button 
-                        onClick={() => deleteMutation.mutate(domain.id as string)}
-                        disabled={deleteMutation.isPending}
-                        className="ml-4 text-red-600 hover:text-red-900 disabled:opacity-50"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                  {expandedDomain === domain.id && (
-                    <tr>
-                      <td colSpan={3} className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <div className="p-4 bg-gray-800 rounded-md shadow-inner text-gray-100 font-mono text-sm overflow-x-auto relative group">
-                          <p className="text-gray-400 mb-2 text-xs uppercase tracking-wide">Add this snippet to the &lt;head&gt; of your website</p>
-                          <code>
-                            {installSnippet(domain.tenant_id)}
-                          </code>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={3} className="px-6 py-10 text-center text-sm text-slate-500">
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/10 border-t-violet-500" />
+                      Loading domains...
+                    </div>
+                  </td>
+                </tr>
+              ) : !domains || domains.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="px-6 py-10 text-center">
+                    <div className="flex flex-col items-center gap-2 text-slate-500">
+                      <Globe className="h-8 w-8 text-slate-600" />
+                      <p className="text-sm">No domains yet. Add your first domain above.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                domains.map((domain) => (
+                  <React.Fragment key={domain.id}>
+                    <tr className="transition-colors hover:bg-white/[0.02]">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-100">
+                        <span className="flex items-center gap-2">
+                          <Globe className="h-4 w-4 text-slate-500" />
+                          {domain.domain}
+                        </span>
+                      </td>
+                      <td className="hidden whitespace-nowrap px-6 py-4 sm:table-cell">
+                        <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400 ring-1 ring-inset ring-emerald-500/20">
+                          Active
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
+                        <div className="flex items-center justify-end gap-4">
                           <button
-                            onClick={() => navigator.clipboard.writeText(installSnippet(domain.tenant_id))}
-                            className="absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Copy to clipboard"
+                            onClick={() => setExpandedDomain(expandedDomain === domain.id ? null : (domain.id as string))}
+                            className="inline-flex items-center gap-1.5 text-violet-400 transition-colors hover:text-violet-300"
+                            aria-label="Install Snippet"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                            </svg>
+                            <Code className="h-4 w-4" />
+                            <span className="hidden sm:inline">Install Snippet</span>
+                          </button>
+                          <button
+                            onClick={() => deleteMutation.mutate(domain.id as string)}
+                            disabled={deleteMutation.isPending}
+                            className="inline-flex items-center gap-1.5 text-red-400 transition-colors hover:text-red-300 disabled:opacity-50"
+                            aria-label="Delete"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="hidden sm:inline">Delete</span>
                           </button>
                         </div>
                       </td>
                     </tr>
-                  )}
-                </React.Fragment>
-              ))
-            )}
-          </tbody>
-        </table>
+                    {expandedDomain === domain.id && (
+                      <tr className="bg-slate-950/40">
+                        <td colSpan={3} className="px-6 py-4">
+                          <div className="relative rounded-lg border border-white/10 bg-slate-950 p-4 font-mono text-sm text-slate-200">
+                            <p className="mb-2 pr-24 text-xs uppercase tracking-wide text-slate-500">
+                              Add this snippet to the &lt;head&gt; of your website
+                            </p>
+                            <pre className="overflow-x-auto whitespace-pre-wrap break-all"><code>{installSnippet(domain.tenant_id)}</code></pre>
+                            <button
+                              onClick={() => handleCopy(domain.id, domain.tenant_id)}
+                              className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-300 transition-colors hover:bg-white/10"
+                              title="Copy to clipboard"
+                              aria-label="Copy to clipboard"
+                            >
+                              {copiedId === domain.id ? (
+                                <>
+                                  <Check className="h-3.5 w-3.5 text-emerald-400" />
+                                  Copied
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-3.5 w-3.5" />
+                                  Copy
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

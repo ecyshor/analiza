@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
+import { AlertCircle } from 'lucide-react'
 
 const METABASE_URL = import.meta.env.VITE_METABASE_URL || import.meta.env.REACT_APP_METABASE_URL || 'http://metabase.dev.analiza.lan'
 
@@ -7,6 +8,7 @@ export function Dashboard() {
   const { getIdTokenClaims } = useAuth0()
   const [metabaseToken, setMetabaseToken] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [iframeLoaded, setIframeLoaded] = useState(false)
 
   useEffect(() => {
     async function getToken() {
@@ -26,39 +28,48 @@ export function Dashboard() {
     getToken()
   }, [getIdTokenClaims])
 
+  const header = (
+    <div>
+      <h1 className="text-2xl font-semibold tracking-tight text-slate-100">Dashboard</h1>
+      <p className="mt-1 text-sm text-slate-400">Traffic overview across your domains.</p>
+    </div>
+  )
+
   if (errorMsg) {
     return (
-      <div className="bg-red-50 border-l-4 border-red-400 p-4 max-w-4xl">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm text-red-700">
-              {errorMsg}
-            </p>
-          </div>
+      <div className="flex h-full flex-col gap-4">
+        {header}
+        <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+          <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-400" />
+          <p>{errorMsg}</p>
         </div>
       </div>
     )
   }
 
-  if (!metabaseToken) {
-    return <div>Loading Dashboard...</div>
-  }
-
   return (
-    <div className="h-full w-full bg-white shadow rounded-lg overflow-hidden">
-      <iframe
-        title="Analytics"
-        src={`${METABASE_URL}/embed/dashboard/${metabaseToken}#bordered=true&titled=true`}
-        frameBorder={0}
-        width="100%"
-        height="100%"
-        className="w-full h-full"
-      />
+    <div className="flex h-full flex-col gap-4">
+      {header}
+      <div className="relative min-h-[600px] flex-1 overflow-hidden rounded-xl border border-white/10 bg-slate-900/60">
+        {metabaseToken && (
+          <iframe
+            title="Analytics"
+            src={`${METABASE_URL}/embed/dashboard/${metabaseToken}#theme=night&bordered=false&titled=false&background=false`}
+            className="absolute inset-0 h-full w-full border-0"
+            // Must match the embedded document's color-scheme, otherwise Chromium paints an opaque backdrop
+            style={{ colorScheme: 'normal' }}
+            onLoad={() => setIframeLoaded(true)}
+          />
+        )}
+        {(!metabaseToken || !iframeLoaded) && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/60">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-violet-500" />
+              <p className="text-sm text-slate-400">Loading dashboard…</p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
