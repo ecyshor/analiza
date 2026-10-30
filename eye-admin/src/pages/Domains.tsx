@@ -2,6 +2,12 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getDomains, createDomain, deleteDomain } from '../api'
 
+const TRACKER_URL = import.meta.env.VITE_TRACKER_URL || import.meta.env.REACT_APP_TRACKER_URL || 'https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js'
+
+// The tracker identifies the site by the tenant UUID; the domain is taken from the request Origin.
+const installSnippet = (tenantId?: string) =>
+  `<script defer src="${TRACKER_URL}" tenant="${tenantId ?? ''}"></script>`
+
 export function Domains() {
   const queryClient = useQueryClient()
   const [newDomain, setNewDomain] = useState('')
@@ -155,10 +161,10 @@ export function Domains() {
                         <div className="p-4 bg-gray-800 rounded-md shadow-inner text-gray-100 font-mono text-sm overflow-x-auto relative group">
                           <p className="text-gray-400 mb-2 text-xs uppercase tracking-wide">Add this snippet to the &lt;head&gt; of your website</p>
                           <code>
-                            &lt;script defer data-domain=&quot;{domain.domain}&quot; src=&quot;{import.meta.env.VITE_TRACKER_URL || import.meta.env.REACT_APP_TRACKER_URL || 'https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js'}&quot;&gt;&lt;/script&gt;
+                            {installSnippet(domain.tenant_id)}
                           </code>
                           <button
-                            onClick={() => navigator.clipboard.writeText(`<script defer data-domain="${domain.domain}" src="${import.meta.env.VITE_TRACKER_URL || import.meta.env.REACT_APP_TRACKER_URL || 'https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js'}"></script>`)}
+                            onClick={() => navigator.clipboard.writeText(installSnippet(domain.tenant_id))}
                             className="absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                             title="Copy to clipboard"
                           >

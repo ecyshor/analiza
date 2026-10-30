@@ -23,7 +23,7 @@
         });
     }
 
-    if (tenant.length === 36) {
+    if (tenant && tenant.length === 36) {
 
         if (document.visibilityState === "visible") {
             view();
