@@ -63,7 +63,7 @@ params:
         price: "$0"
         period: "forever"
         features:
-          - "Up to 100k pageviews / mo"
+          - "Up to 100k events / year"
           - "100% Data Ownership"
           - "Community Support"
         cta: "Get Started"
@@ -73,7 +73,7 @@ params:
         price: "$9"
         period: "per year"
         features:
-          - "Up to 1M pageviews / year"
+          - "Up to 1M events / year"
           - "100% Data Ownership"
           - "Email Support"
         cta: "Upgrade Now"
@@ -91,7 +91,7 @@ params:
         highlight: false
 
   footer:
-    copyright: "2026 Analiza.dev"
+    copyright: "Analiza.dev"
     socials:
       - platform: "GitHub"
         url: "https://github.com/ecyshor/analiza"
