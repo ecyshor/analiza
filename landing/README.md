@@ -1,13 +1,14 @@
 # landing (Hugo Static Site)
 
 ## Purpose
-Marketing and documentation site for analiza.dev.
+Marketing site for analiza.dev.
 
 ## Workflow
-- Built with Hugo (`hugo.yaml`)
-- Content in `content/`, layouts in `layouts/`
-- Deploy via Netlify
+- Built with Hugo (`hugo.yaml`), no theme or Hugo modules
+- `make start` runs the dev server, `make build` builds into `public/`
+- Deploy via Netlify (`netlify.toml`)
 
 ## Customization
-- Themes in `themes/`
-- Static assets in `static/`, `public/`
+- Page copy, features and pricing live under `params` in `hugo.yaml`
+- Templates in `layouts/` (`_default/baseof.html`, `index.html`)
+- Styles in `static/css/style.css`, images in `static/images/`

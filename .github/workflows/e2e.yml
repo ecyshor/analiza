@@ -9,7 +9,8 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    # Playwright cannot install browser deps on ubuntu-latest (26.04) yet
+    runs-on: ubuntu-24.04
     env:
       COMPOSE_ARGS: -f docker-compose.yml -f docker-compose.ci.yml
 
