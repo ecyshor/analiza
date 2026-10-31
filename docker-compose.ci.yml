@@ -2,7 +2,7 @@ services:
   postgres:
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d/
-      - pgdata:/bitnami/postgresql
+      - pgdata:/var/lib/postgresql
   clickhouse:
     volumes:
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
