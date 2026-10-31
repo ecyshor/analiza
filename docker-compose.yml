@@ -125,7 +125,7 @@ services:
       timeout: 5s
       retries: 5
   postgrest:
-    image: postgrest/postgrest:v14.0
+    image: postgrest/postgrest:v14.13
     command:
       - "postgrest"
       - "/config/postgrest.conf"
