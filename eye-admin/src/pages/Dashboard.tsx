@@ -1,6 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 import { AlertCircle } from 'lucide-react'
+import { GettingStarted } from '../components/GettingStarted'
+import { useDomains } from '../hooks/domains'
 
 const METABASE_URL = import.meta.env.VITE_METABASE_URL || import.meta.env.REACT_APP_METABASE_URL || 'http://metabase.dev.analiza.lan'
 
@@ -9,6 +11,7 @@ export function Dashboard() {
   const [metabaseToken, setMetabaseToken] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [iframeLoaded, setIframeLoaded] = useState(false)
+  const { data: domains, isLoading: domainsLoading, error: domainsError } = useDomains()
 
   useEffect(() => {
     async function getToken() {
@@ -35,6 +38,16 @@ export function Dashboard() {
     </div>
   )
 
+  // Without domains there is no traffic to show, so walk the user through setup instead.
+  if (!domainsLoading && !domainsError && domains && domains.length === 0) {
+    return (
+      <div className="flex h-full flex-col gap-4">
+        {header}
+        <GettingStarted domains={domains} showAddForm />
+      </div>
+    )
+  }
+
   if (errorMsg) {
     return (
       <div className="flex h-full flex-col gap-4">
@@ -50,6 +63,12 @@ export function Dashboard() {
   return (
     <div className="flex h-full flex-col gap-4">
       {header}
+      {domainsError && (
+        <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+          <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-400" />
+          <p>Couldn’t load your domains: {domainsError.message}</p>
+        </div>
+      )}
       <div className="relative min-h-[600px] flex-1 overflow-hidden rounded-xl border border-white/10 bg-slate-900/60">
         {metabaseToken && (
           <iframe

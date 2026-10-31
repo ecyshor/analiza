@@ -5,8 +5,9 @@ test('Load app, check dashboard, create and validate domain', async ({ page }) =
   // Wait for the app to load. Since mock auth is true, it should immediately load the dashboard.
   await page.goto('/');
 
-  // Dashboard should load (iframe with title "Analytics")
-  await expect(page.locator('iframe[title="Analytics"]')).toBeVisible();
+  // With no domains yet, the dashboard shows the getting started flow instead of the iframe
+  await expect(page.getByRole('heading', { name: 'Get started' })).toBeVisible();
+  await expect(page.locator('iframe[title="Analytics"]')).toHaveCount(0);
 
   // Navigate to Domains
   await page.getByRole('link', { name: 'Domains' }).click();
@@ -18,8 +19,11 @@ test('Load app, check dashboard, create and validate domain', async ({ page }) =
   // Fill in the domain form
   const testDomain = `test.analiza.lan`;
   await page.locator('input[placeholder="example.com"]').fill(testDomain);
-  await page.getByRole('button', { name: 'Add Domain' }).click();
+  await page.getByRole('button', { name: 'Add domain' }).click();
 
   // Validate the domain appears in the list
   await expect(page.locator(`td:has-text("${testDomain}")`)).toBeVisible();
+
+  // The install section of the new domain expands automatically
+  await expect(page.getByRole('tab', { name: 'WordPress' })).toBeVisible();
 });
