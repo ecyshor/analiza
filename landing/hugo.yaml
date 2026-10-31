@@ -20,7 +20,7 @@ params:
     logoText: "Analiza"
     logoImage: "logos/analiza-logo-simple.png"
     links:
-      - title: Analiza App
+      - title: Sign in
         url: https://app.analiza.dev
 
   hero:
@@ -28,10 +28,10 @@ params:
     title: "Analytics that respect your users."
     subtitle: "Simple, privacy-first, and lightning fast. Your data is 100% hosted and processed in the EU, ensuring effortless GDPR compliance without sacrificing insights."
     cta_primary:
-      text: "Start for Free"
+      text: "Start for free"
       url: "https://app.analiza.dev"
     cta_secondary:
-      text: "View Source"
+      text: "View source"
       url: "https://github.com/ecyshor/analiza"
 
   features:
@@ -55,18 +55,27 @@ params:
     title: "See it in action."
     subtitle: "A live demo with sample traffic, plus this website's real visitor count."
 
+  install:
+    title: "Install in a minute."
+    subtitle: "One line in the head of your site, and you're done. No plugins, no cookies, no build step."
+    snippet: '<script defer src="https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js" tenant="YOUR-SITE-ID"></script>'
+    platforms: "Works with WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or any HTML site."
+    cta:
+      text: "Add your site"
+      url: "https://app.analiza.dev"
+
   pricing:
     title: "Simple, transparent pricing."
     subtitle: "Start for free and only pay after you use up your free tier. No credit card required."
     plans:
-      - title: "Free Tier"
+      - title: "Free"
         price: "$0"
         period: "forever"
         features:
           - "Up to 100k events / year"
           - "100% Data Ownership"
           - "Community Support"
-        cta: "Get Started"
+        cta: "Start for free"
         url: "https://app.analiza.dev"
         highlight: false
       - title: "Standard"
@@ -76,7 +85,7 @@ params:
           - "Up to 1M events / year"
           - "100% Data Ownership"
           - "Email Support"
-        cta: "Upgrade Now"
+        cta: "Choose Standard"
         url: "https://app.analiza.dev"
         highlight: true
       - title: "Scale"
@@ -86,7 +95,7 @@ params:
           - "Pay as you grow"
           - "100% Data Ownership"
           - "Priority Support"
-        cta: "Contact Us"
+        cta: "Contact us"
         url: "mailto:support@analiza.dev"
         highlight: false
 

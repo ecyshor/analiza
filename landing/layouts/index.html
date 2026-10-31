@@ -58,6 +58,10 @@
                     <div class="browser-address">analiza.dev/dashboard</div>
                 </div>
                 <div class="iframe-wrapper">
+                    <div class="iframe-placeholder" id="demo-placeholder">
+                        <span class="spinner" aria-hidden="true"></span>
+                        <p>Loading the demo dashboard…</p>
+                    </div>
                     <!-- CRITICAL: Keep iframe as requested -->
                     <iframe
                         id="analytics-dashboard"
@@ -69,7 +73,22 @@
                 </div>
             </div>
             <script src="https://metabase.analiza.dev/app/iframeResizer.js"></script>
-            <script>document.getElementById('analytics-dashboard').addEventListener('load', function () { if (window.iFrameResize) { iFrameResize({ checkOrigin: false }, this); } });</script>
+            <script>document.getElementById('analytics-dashboard').addEventListener('load', function () { var p = document.getElementById('demo-placeholder'); if (p) { p.classList.add('hidden'); } if (window.iFrameResize) { iFrameResize({ checkOrigin: false }, this); } });</script>
+        </div>
+    </section>
+
+    <!-- Install Section -->
+    <section class="install" id="install">
+        <div class="container">
+            <div class="section-heading text-center">
+                <h2>{{ .Site.Params.install.title }}</h2>
+                <p>{{ .Site.Params.install.subtitle }}</p>
+            </div>
+            <div class="install-box">
+                <pre class="install-snippet"><code>{{ .Site.Params.install.snippet | htmlEscape | safeHTML }}</code></pre>
+                <p class="install-platforms">{{ .Site.Params.install.platforms }}</p>
+                <a href="{{ .Site.Params.install.cta.url }}" class="btn btn-primary">{{ .Site.Params.install.cta.text }}</a>
+            </div>
         </div>
     </section>
 
