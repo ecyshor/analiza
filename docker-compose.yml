@@ -48,18 +48,21 @@ services:
       - "traefik.http.middlewares.cors2.headers.accesscontrolmaxage=200"
       - "traefik.http.middlewares.cors2.headers.addvaryheader=true"
   clickhouse:
-    image: docker.io/bitnamilegacy/clickhouse:25.7.5
-    #    user: "1001:1001" # Defined by the bitnami dockerfile https://github.com/bitnami/containers/blob/main/bitnami/clickhouse/23/debian-11/Dockerfile
+    image: docker.io/clickhouse/clickhouse-server:26.8.36.3
     environment:
-      - CLICKHOUSE_ADMIN_USER=eye_admin
-      - CLICKHOUSE_ADMIN_PASSWORD=eye_super_duper_password
+      - CLICKHOUSE_USER=eye_admin
+      - CLICKHOUSE_PASSWORD=eye_super_duper_password
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     labels:
       - "logging_exclude=true"
     volumes:
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
+      - ./eye/clickhouse/config.d/logs.xml:/etc/clickhouse-server/config.d/logs.xml:ro
       - type: bind
-        source: ${ANALIZA_DATA_DIR:-/data/analiza}/clickhouse/data
-        target: /bitnami/clickhouse
+        source: ${ANALIZA_DATA_DIR:-/data/analiza}/clickhouse-server
+        target: /var/lib/clickhouse
+        bind:
+          create_host_path: true
     ulimits:
       nofile:
         soft: 262144
@@ -68,7 +71,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "clickhouse-client -u $${CLICKHOUSE_ADMIN_USER} --password $${CLICKHOUSE_ADMIN_PASSWORD} -q 'SELECT 1'",
+          "clickhouse-client -u $${CLICKHOUSE_USER} --password $${CLICKHOUSE_PASSWORD} -q 'SELECT 1'",
         ]
       interval: 10s
       timeout: 5s
@@ -85,7 +88,7 @@ services:
           cpus: "4"
           memory: 8G
   metabase:
-    image: "metabase/metabase:v0.56.x"
+    image: "metabase/metabase:v0.65.2.4"
     container_name: "metabase"
     environment:
       - MB_DB_TYPE=postgres

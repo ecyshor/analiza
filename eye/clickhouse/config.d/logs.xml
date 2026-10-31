@@ -1,0 +1,46 @@
+<!--
+  Keep ClickHouse's own logs bounded. Without this the system log tables
+  (text_log, trace_log, metric_log, ...) grow forever: on prod they reached
+  ~59 GB next to <1 MB of real data.
+  - server log files: warning level, 3 x 100M rotated files
+  - system.*_log tables: rows older than 7 days are dropped by TTL
+  - text_log only stores warnings and above
+-->
+<clickhouse>
+    <logger>
+        <level>warning</level>
+        <size>100M</size>
+        <count>3</count>
+    </logger>
+
+    <query_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></query_log>
+    <trace_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></trace_log>
+    <query_thread_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></query_thread_log>
+    <query_views_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></query_views_log>
+    <part_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></part_log>
+    <background_schedule_pool_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></background_schedule_pool_log>
+    <text_log>
+        <level>warning</level>
+        <ttl>event_date + INTERVAL 7 DAY DELETE</ttl>
+    </text_log>
+    <metric_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></metric_log>
+    <latency_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></latency_log>
+    <error_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></error_log>
+    <instrumentation_trace_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></instrumentation_trace_log>
+    <query_metric_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></query_metric_log>
+    <asynchronous_metric_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></asynchronous_metric_log>
+    <iceberg_metadata_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></iceberg_metadata_log>
+    <delta_lake_metadata_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></delta_lake_metadata_log>
+    <!-- The default config sets an engine here, so the TTL has to go inside it. -->
+    <opentelemetry_span_log>
+        <engine>ENGINE = MergeTree PARTITION BY toYYYYMM(finish_date) ORDER BY (finish_date, finish_time_us) TTL finish_date + INTERVAL 7 DAY DELETE</engine>
+    </opentelemetry_span_log>
+    <crash_log><ttl>event_date + INTERVAL 30 DAY DELETE</ttl></crash_log>
+    <processors_profile_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></processors_profile_log>
+    <asynchronous_insert_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></asynchronous_insert_log>
+    <backup_log><ttl>event_date + INTERVAL 30 DAY DELETE</ttl></backup_log>
+    <blob_storage_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></blob_storage_log>
+    <aggregated_zookeeper_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></aggregated_zookeeper_log>
+    <zookeeper_connection_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></zookeeper_connection_log>
+    <s3queue_log><ttl>event_date + INTERVAL 7 DAY DELETE</ttl></s3queue_log>
+</clickhouse>

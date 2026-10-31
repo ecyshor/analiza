@@ -6,7 +6,8 @@ services:
   clickhouse:
     volumes:
       - ./eye/clickhouse/init:/docker-entrypoint-initdb.d
-      - chdata:/bitnami/clickhouse
+      - ./eye/clickhouse/config.d/logs.xml:/etc/clickhouse-server/config.d/logs.xml:ro
+      - chdata:/var/lib/clickhouse
 volumes:
   pgdata:
   chdata:
