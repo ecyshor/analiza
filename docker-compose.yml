@@ -195,6 +195,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      # eye's schema grants on api.domains, created by the postgrest migrations
+      postgrest_flyway:
+        condition: service_completed_successfully
     deploy:
       restart_policy:
         condition: on-failure
