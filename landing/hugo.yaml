@@ -69,7 +69,7 @@ params:
     subtitle: "Start for free and only pay after you use up your free tier. No credit card required."
     plans:
       - title: "Free"
-        price: "$0"
+        price: "€0"
         period: "forever"
         features:
           - "Up to 100k events / year"
@@ -79,7 +79,7 @@ params:
         url: "https://app.analiza.dev"
         highlight: false
       - title: "Standard"
-        price: "$9"
+        price: "€9"
         period: "per year"
         features:
           - "Up to 1M events / year"
@@ -89,7 +89,7 @@ params:
         url: "https://app.analiza.dev"
         highlight: true
       - title: "Scale"
-        price: "$7"
+        price: "€7"
         period: "per extra million"
         features:
           - "Pay as you grow"
