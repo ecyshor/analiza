@@ -156,16 +156,15 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	event.EventType = userEvent.EventType
 	event.Referral = userEvent.Referral
 
-	pageUrl, err := url.Parse(userEvent.Path)
-	if err != nil {
-		event.UtmContent = pageUrl.Query().Get("utm_content")
-		event.UtmTerm = pageUrl.Query().Get("utm_term")
-		event.UtmMedium = pageUrl.Query().Get("utm_medium")
-		event.UtmSource = pageUrl.Query().Get("utm_source")
-		event.UtmCampaign = pageUrl.Query().Get("utm_campaign")
+	path, utm, ok := parsePageUrl(userEvent.Path)
+	if ok {
+		event.Path = path
+		event.UtmSource = utm.source
+		event.UtmMedium = utm.medium
+		event.UtmCampaign = utm.campaign
+		event.UtmTerm = utm.term
+		event.UtmContent = utm.content
 	}
-
-	event.Path = strings.TrimSuffix(pageUrl.Path, "/")
 
 	realIp := request.Header.Get("X-Real-Ip")
 	if realIp == "" {
@@ -192,6 +191,31 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	// Write a response back to the client
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("OK"))
+}
+
+type utmParams struct {
+	source   string
+	medium   string
+	campaign string
+	term     string
+	content  string
+}
+
+// parsePageUrl extracts the path (without a trailing slash) and the utm_* query
+// parameters from a raw page URL. ok is false when the URL cannot be parsed.
+func parsePageUrl(raw string) (path string, utm utmParams, ok bool) {
+	pageUrl, err := url.Parse(raw)
+	if err != nil {
+		return "", utmParams{}, false
+	}
+	query := pageUrl.Query()
+	return strings.TrimSuffix(pageUrl.Path, "/"), utmParams{
+		source:   query.Get("utm_source"),
+		medium:   query.Get("utm_medium"),
+		campaign: query.Get("utm_campaign"),
+		term:     query.Get("utm_term"),
+		content:  query.Get("utm_content"),
+	}, true
 }
 
 func (s *Server) batchInsertRows(eventChan <-chan Event, checker *DomainChecker) {

@@ -5,10 +5,15 @@
     const endpoint = scriptEl.getAttribute("hostname") || "https://api.analiza.dev";
     const tenant = scriptEl.getAttribute("tenant");
 
+    let lastViewedUrl = null;
+    let hiddenAt = null;
+    const refocusViewThresholdMs = 30 * 60 * 1000;
+
     function view() {
         sendEvent({
             t: "view", p: location.href, u: tenant, r: document.referrer
         });
+        lastViewedUrl = location.href;
     }
 
     function gone() {
@@ -39,9 +44,13 @@
 
         document.onvisibilitychange = () => {
             if (document.visibilityState === "hidden") {
+                hiddenAt = Date.now();
                 gone();
             } else if (document.visibilityState === "visible") {
-                view();
+                const hiddenForMs = hiddenAt === null ? 0 : Date.now() - hiddenAt;
+                if (location.href !== lastViewedUrl || hiddenForMs > refocusViewThresholdMs) {
+                    view();
+                }
             }
         };
     } else {
