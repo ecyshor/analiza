@@ -53,7 +53,7 @@ params:
 
   dashboard:
     title: "See it in action."
-    subtitle: "This very website's live analytics."
+    subtitle: "A live demo with sample traffic, plus this website's real visitor count."
 
   pricing:
     title: "Simple, transparent pricing."
