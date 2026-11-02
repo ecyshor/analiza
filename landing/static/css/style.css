@@ -496,6 +496,64 @@ h1, h2, h3, h4 {
     flex-shrink: 0;
 }
 
+/* FAQ */
+.faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.faq-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0 1.5rem;
+}
+
+.faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item summary::after {
+    content: "+";
+    flex-shrink: 0;
+    color: var(--accent-violet);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.faq-item[open] summary::after {
+    content: "\2013";
+}
+
+.faq-item p {
+    color: #CBD5E1; /* Slate 300 — WCAG AA on the card background */
+    padding-bottom: 1.25rem;
+}
+
+/* Dashboard note: crawlers can't read the iframe, so the metrics are described in text */
+.dashboard-note {
+    max-width: 800px;
+    margin: var(--space-md) auto 0;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
 /* Footer */
 .footer {
     border-top: 1px solid var(--border-color);

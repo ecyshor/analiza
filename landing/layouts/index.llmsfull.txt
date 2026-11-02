@@ -1,0 +1,54 @@
+# Analiza — full overview (llms-full.txt)
+
+> {{ .Site.Params.description }}
+
+## What is Analiza?
+
+{{ .Site.Params.hero.subtitle }}
+
+Analiza is open source on GitHub: https://github.com/ecyshor/analiza
+App (sign in): https://app.analiza.dev
+Contact: support@analiza.dev
+
+All data is stored and processed in the EU (Hetzner, Germany). The tracker sets no
+cookies, uses no localStorage and no cross-site/cross-device tracking, so the
+analytics itself needs no cookie banner, and there is no fingerprinting code.
+
+## Features
+
+{{ range .Site.Params.features.items }}- **{{ .title }}**: {{ .description }}
+{{ end }}
+## Install
+
+One script tag in the head of your site:
+
+    {{ .Site.Params.install.snippet }}
+
+{{ .Site.Params.install.platforms }}
+
+Single-page app navigations (history.pushState / popstate) are tracked automatically.
+
+Tracker source: https://github.com/ecyshor/analiza/blob/main/tracker/analiza.js
+(~60 lines, about 1 KB minified; sends only page URL, document.referrer, site id
+and event type — page view / page hidden.)
+
+## Pricing
+
+{{ range .Site.Params.pricing.plans }}- **{{ .title }}** — {{ .price }} {{ .period }}: {{ delimit .features "; " }}. Sign up: {{ .url }}
+{{ end }}
+No credit card required for the Free tier.
+
+## FAQ
+
+{{ range .Site.Params.faq.items }}### {{ .question }}
+
+{{ .answer }}
+
+{{ end }}
+## Links
+
+- Home: {{ .Site.BaseURL }}
+- App: https://app.analiza.dev
+- GitHub: https://github.com/ecyshor/analiza
+- Tracker source: https://github.com/ecyshor/analiza/blob/main/tracker/analiza.js
+- Short version: {{ .Site.BaseURL }}llms.txt

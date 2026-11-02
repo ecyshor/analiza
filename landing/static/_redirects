@@ -1,1 +1,3 @@
-/*  /index.html  200
+# Canonical host: redirect www to the apex domain
+http://www.analiza.dev/*   https://analiza.dev/:splat   301!
+https://www.analiza.dev/*  https://analiza.dev/:splat   301!

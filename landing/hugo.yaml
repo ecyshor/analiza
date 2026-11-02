@@ -1,10 +1,32 @@
 baseURL: https://analiza.dev
 languageCode: en-us
-title: Analiza | EU Hosted, GDPR Compliant, No Cookie Basic Analytics
+title: Analiza | Privacy-first analytics hosted in the EU
+
+# robots.txt lives in static/robots.txt (with explicit AI-crawler rules)
+enableRobotsTXT: false
 
 # Disables warnings
 disableKinds:
   - taxonomy
+
+sitemap:
+  changefreq: weekly
+  priority: 1.0
+
+# llms.txt / llms-full.txt are generated from the same params as the HTML pages
+# (layouts/index.llms.txt, layouts/index.llmsfull.txt) so they never drift.
+outputFormats:
+  llms:
+    mediaType: text/plain
+    isPlainText: true
+    baseName: llms
+  llmsfull:
+    mediaType: text/plain
+    isPlainText: true
+    baseName: llms-full
+
+outputs:
+  home: [html, llms, llmsfull]
 
 markup:
   goldmark:
@@ -13,8 +35,10 @@ markup:
 
 params:
   openGraph: true
-  description: Analiza is an EU hosted, GDPR compliant, no cookie basic analytics platform. Try it for free or at a low cost.
-  keywords: "EU hosted analytics, GDPR compliant analytics, no cookie analytics, basic analytics, free analytics, low cost analytics, privacy-first analytics"
+  description: Privacy-first, cookie-free web analytics hosted in the EU. GDPR compliant, open source, lightweight script. Free up to 100k events a year.
+  keywords: "EU hosted analytics, GDPR compliant analytics, no cookie analytics, privacy-first analytics, lightweight web analytics, open source analytics, free analytics"
+  images:
+    - images/og-image.png
   
   navbar:
     logoText: "Analiza"
@@ -54,6 +78,8 @@ params:
   dashboard:
     title: "See it in action."
     subtitle: "A live demo with sample traffic, plus this website's real visitor count."
+    # Crawlers can't read the iframe, so this text describes what the dashboard shows.
+    description: "The embedded dashboard below shows what Analiza reports: unique visitors and page views over time, top pages and entry pages, top sources (referrers) and UTM campaigns, visitor countries, devices, browsers and operating systems, and session stats such as bounce rate, views per session and median session duration."
 
   install:
     title: "Install in a minute."
@@ -70,6 +96,7 @@ params:
     plans:
       - title: "Free"
         price: "€0"
+        priceValue: 0
         period: "forever"
         features:
           - "Up to 100k events / year"
@@ -80,7 +107,9 @@ params:
         highlight: false
       - title: "Standard"
         price: "€9"
+        priceValue: 9
         period: "per year"
+        unitText: "year"
         features:
           - "Up to 1M events / year"
           - "100% Data Ownership"
@@ -90,7 +119,9 @@ params:
         highlight: true
       - title: "Scale"
         price: "€7"
+        priceValue: 7
         period: "per extra million"
+        unitText: "additional million events"
         features:
           - "Pay as you grow"
           - "100% Data Ownership"
@@ -99,8 +130,37 @@ params:
         url: "mailto:support@analiza.dev"
         highlight: false
 
+  faq:
+    title: "Frequently asked questions."
+    subtitle: "Short answers to what people (and their AI assistants) ask us most."
+    items:
+      - question: "What is Analiza?"
+        answer: "Analiza is a lightweight, privacy-first web analytics tool. It gives you the essentials — visitors, page views, top pages and referrers — without cookies, fingerprinting or cross-site tracking."
+      - question: "Is Analiza GDPR compliant? Where is my data stored?"
+        answer: "All data is stored and processed in the EU (Hetzner, Germany), so it never leaves the European Union. Analiza is designed so that no cookies, localStorage or cross-site/cross-device tracking are used, which is why the analytics itself needs no cookie banner. For your specific legal situation, please consult your own legal advice."
+      - question: "Do I need a cookie banner?"
+        answer: "Not for Analiza. The tracker sets no cookies and stores nothing in the browser, so the analytics itself does not require a consent banner. Your site may still need one for other services you use — consult your own legal advice for your specific case."
+      - question: "What data does the tracker collect?"
+        answer: "Only four things per event: the page URL, the referrer (document.referrer), your site id, and the event type (page view or page hidden). The script is about 60 lines, about 1 KB minified, and contains no fingerprinting code. You can read the full source on GitHub."
+      - question: "How do I install Analiza?"
+        answer: "Add one script tag to the head of your site (see the install snippet above) with your site id. It works with any site — WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or plain HTML. No plugins, no build step."
+      - question: "Does it work with single-page apps (SPAs)?"
+        answer: "Yes. Client-side navigations via history.pushState and popstate are tracked automatically, so apps built with React, Vue, Next.js and similar frameworks get correct page views without extra code."
+      - question: "How much does it cost?"
+        answer: "The Free plan is €0 and includes up to 100k events per year — no credit card required. Standard is €9 per year up to 1M events per year. Beyond that, Scale costs €7 per additional million events. See the pricing section above."
+      - question: "Is Analiza open source? Can I self-host or inspect the code?"
+        answer: "Yes — the full source code is open on GitHub at https://github.com/ecyshor/analiza, so you can inspect and audit everything we claim about the tracker and the data handling. Self-hosted setups are not officially supported; the hosted service at analiza.dev is the supported way to use it."
+      - question: "How is Analiza different from Google Analytics?"
+        answer: "Analiza doesn't use cookies, doesn't track users across sites or devices, and doesn't build advertising profiles. All data stays in the EU, the script is about 1 KB, and the dashboard shows simple aggregate metrics instead of user-level reports. If you need ad measurement and personalization, Google Analytics is built for that — Analiza is the lightweight, privacy-first alternative."
+
   footer:
     copyright: "Analiza.dev"
     socials:
       - platform: "GitHub"
         url: "https://github.com/ecyshor/analiza"
+      - platform: "App"
+        url: "https://app.analiza.dev"
+      - platform: "Email"
+        url: "mailto:support@analiza.dev"
+      - platform: "llms.txt"
+        url: "/llms.txt"
