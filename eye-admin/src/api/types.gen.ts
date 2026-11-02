@@ -15,6 +15,18 @@ export type DomainInsert = {
     domain: string;
 };
 
+export type ExportRequest = {
+    id?: string;
+    tenant_id?: string;
+    email?: string;
+    created?: string;
+    notified_at?: string | null;
+};
+
+export type ExportRequestInsert = {
+    email: string;
+};
+
 export type GetDomainsData = {
     body?: never;
     path?: never;
@@ -80,3 +92,38 @@ export type UpdateDomainResponses = {
 };
 
 export type UpdateDomainResponse = UpdateDomainResponses[keyof UpdateDomainResponses];
+
+export type GetExportRequestsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * PostgREST ordering, e.g. created.desc
+         */
+        order?: string;
+    };
+    url: '/export_requests';
+};
+
+export type GetExportRequestsResponses = {
+    /**
+     * A list of export requests
+     */
+    200: Array<ExportRequest>;
+};
+
+export type GetExportRequestsResponse = GetExportRequestsResponses[keyof GetExportRequestsResponses];
+
+export type CreateExportRequestData = {
+    body: ExportRequestInsert;
+    path?: never;
+    query?: never;
+    url: '/export_requests';
+};
+
+export type CreateExportRequestResponses = {
+    /**
+     * Created
+     */
+    201: unknown;
+};

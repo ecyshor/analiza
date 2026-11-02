@@ -61,6 +61,38 @@ paths:
       responses:
         '204':
           description: No Content
+  /export_requests:
+    get:
+      summary: List export requests
+      operationId: getExportRequests
+      parameters:
+        - name: order
+          in: query
+          description: PostgREST ordering, e.g. created.desc
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of export requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExportRequest'
+    post:
+      summary: Create an export request
+      operationId: createExportRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequestInsert'
+      responses:
+        '201':
+          description: Created
 components:
   schemas:
     Domain:
@@ -84,3 +116,29 @@ components:
       properties:
         domain:
           type: string
+    ExportRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        created:
+          type: string
+          format: date-time
+        notified_at:
+          type: string
+          format: date-time
+          nullable: true
+    ExportRequestInsert:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
