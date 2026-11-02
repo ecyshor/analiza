@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Outlet, NavLink as RouterNavLink } from 'react-router-dom'
-import { LayoutDashboard, Globe, LogOut } from 'lucide-react'
+import { LayoutDashboard, Globe, Download, LogOut } from 'lucide-react'
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
 import { Logo } from './Logo'
@@ -12,6 +12,7 @@ export function Layout() {
     <>
       <SidebarLink to="/" end icon={<LayoutDashboard size={18} />} label="Dashboard" />
       <SidebarLink to="/domains" icon={<Globe size={18} />} label="Domains" />
+      <SidebarLink to="/export" icon={<Download size={18} />} label="Export" />
     </>
   )
 
@@ -61,6 +62,7 @@ export function Layout() {
         <div className="flex items-center gap-1">
           <MobileNavLink to="/" end icon={<LayoutDashboard size={16} />} label="Dashboard" />
           <MobileNavLink to="/domains" icon={<Globe size={16} />} label="Domains" />
+          <MobileNavLink to="/export" icon={<Download size={16} />} label="Export" />
           <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
             aria-label="Sign out"

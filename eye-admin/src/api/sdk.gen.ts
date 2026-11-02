@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateDomainData, CreateDomainResponses, DeleteDomainData, DeleteDomainResponses, GetDomainsData, GetDomainsResponses, UpdateDomainData, UpdateDomainResponses } from './types.gen';
+import type { CreateDomainData, CreateDomainResponses, CreateExportRequestData, CreateExportRequestResponses, DeleteDomainData, DeleteDomainResponses, GetDomainsData, GetDomainsResponses, GetExportRequestsData, GetExportRequestsResponses, UpdateDomainData, UpdateDomainResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -45,6 +45,23 @@ export const deleteDomain = <ThrowOnError extends boolean = false>(options: Opti
  */
 export const updateDomain = <ThrowOnError extends boolean = false>(options: Options<UpdateDomainData, ThrowOnError>): RequestResult<UpdateDomainResponses, unknown, ThrowOnError> => (options.client ?? client).patch<UpdateDomainResponses, unknown, ThrowOnError>({
     url: '/domains?id=eq.{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List export requests
+ */
+export const getExportRequests = <ThrowOnError extends boolean = false>(options?: Options<GetExportRequestsData, ThrowOnError>): RequestResult<GetExportRequestsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetExportRequestsResponses, unknown, ThrowOnError>({ url: '/export_requests', ...options });
+
+/**
+ * Create an export request
+ */
+export const createExportRequest = <ThrowOnError extends boolean = false>(options: Options<CreateExportRequestData, ThrowOnError>): RequestResult<CreateExportRequestResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateExportRequestResponses, unknown, ThrowOnError>({
+    url: '/export_requests',
     ...options,
     headers: {
         'Content-Type': 'application/json',

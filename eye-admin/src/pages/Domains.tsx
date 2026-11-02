@@ -17,11 +17,16 @@ export function Domains() {
   const addMutation = useAddDomain()
   const deleteMutation = useDeleteDomain()
 
-  // Auto-expand the install section of a freshly added domain.
-  const handleAdded = () => {
-    if (addMutation.variables) setAutoExpand(addMutation.variables)
-    setConfirmDeleteId(null)
-  }
+  // Auto-expand the install section of a freshly added domain. The mutation
+  // result is read in the render where the add succeeded, so `variables` holds
+  // the domain just added; reading it from a submit-callback closure would see
+  // the pre-mutation snapshot where variables is still undefined.
+  useEffect(() => {
+    if (addMutation.isSuccess && addMutation.variables) {
+      setAutoExpand(addMutation.variables)
+      setConfirmDeleteId(null)
+    }
+  }, [addMutation.isSuccess, addMutation.variables])
 
   useEffect(() => {
     if (!autoExpand || !domains) return
@@ -58,7 +63,7 @@ export function Domains() {
       )}
 
       <div className="rounded-xl border border-white/10 bg-slate-900/60 p-5">
-        <AddDomainForm mutation={addMutation} onAdded={handleAdded} />
+        <AddDomainForm mutation={addMutation} />
       </div>
 
       {isLoading ? (

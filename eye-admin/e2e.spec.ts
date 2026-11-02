@@ -27,3 +27,35 @@ test('Load app, check dashboard, create and validate domain', async ({ page }) =
   // The install section of the new domain expands automatically
   await expect(page.getByRole('tab', { name: 'WordPress' })).toBeVisible();
 });
+
+test('Export page opens from nav and validates the email inline', async ({ page }) => {
+  // Mock the export_requests API so this test runs without the full stack.
+  await page.route('**/export_requests**', async (route) => {
+    if (route.request().method() === 'POST') {
+      await route.fulfill({ status: 201, contentType: 'application/json', body: '{}' });
+    } else {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+    }
+  });
+
+  await page.goto('/');
+
+  // Navigate to Export via the nav link
+  await page.getByRole('link', { name: 'Export' }).click();
+  await page.waitForURL('http://localhost:5174/export');
+  await expect(page.locator('h1:has-text("Export")')).toBeVisible();
+
+  // The email input is prefilled with the mocked Auth0 user's email
+  const emailInput = page.locator('#export-email');
+  await expect(emailInput).toHaveValue('test@analiza.dev');
+
+  // An invalid email shows an inline validation error and does not submit
+  await emailInput.fill('not-an-email');
+  await page.getByRole('button', { name: 'Request export' }).click();
+  await expect(page.getByRole('alert')).toContainText("doesn't look like a valid email address");
+
+  // A valid email submits successfully
+  await emailInput.fill('test@analiza.dev');
+  await page.getByRole('button', { name: 'Request export' }).click();
+  await expect(page.getByText('Export requested.')).toBeVisible();
+});
