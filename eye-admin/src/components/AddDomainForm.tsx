@@ -6,10 +6,9 @@ type AddDomainMutation = ReturnType<typeof useAddDomain>
 
 interface AddDomainFormProps {
   mutation: AddDomainMutation
-  onAdded?(): void
 }
 
-export function AddDomainForm({ mutation: addMutation, onAdded }: AddDomainFormProps) {
+export function AddDomainForm({ mutation: addMutation }: AddDomainFormProps) {
   const [newDomain, setNewDomain] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
 
@@ -25,7 +24,6 @@ export function AddDomainForm({ mutation: addMutation, onAdded }: AddDomainFormP
     addMutation.mutate(normalized, {
       onSuccess: () => {
         setNewDomain('')
-        onAdded?.()
       }
     })
   }
