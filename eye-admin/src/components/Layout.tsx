@@ -4,6 +4,7 @@ import { LayoutDashboard, Globe, Download, LogOut } from 'lucide-react'
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
 import { Logo } from './Logo'
+import { InstallAppButton } from './InstallAppButton'
 
 export function Layout() {
   const { logout, user } = useAuth0()
@@ -29,6 +30,9 @@ export function Layout() {
         </nav>
 
         <div className="border-t border-white/10 p-4">
+          <div className="mb-3">
+            <InstallAppButton />
+          </div>
           <div className="mb-3 flex items-center gap-3">
             {user?.picture ? (
               <img
@@ -56,13 +60,14 @@ export function Layout() {
         </div>
       </aside>
 
-      {/* Mobile top bar */}
-      <div className="flex h-14 items-center justify-between px-4 border-b border-white/10 bg-slate-900/40 md:hidden">
+      {/* Mobile top bar (padded for the notch when installed with a translucent status bar) */}
+      <div className="flex min-h-14 items-center justify-between px-4 pt-[env(safe-area-inset-top)] border-b border-white/10 bg-slate-900/40 md:hidden">
         <Logo />
         <div className="flex items-center gap-1">
           <MobileNavLink to="/" end icon={<LayoutDashboard size={16} />} label="Dashboard" />
           <MobileNavLink to="/domains" icon={<Globe size={16} />} label="Domains" />
           <MobileNavLink to="/export" icon={<Download size={16} />} label="Export" />
+          <InstallAppButton variant="icon" />
           <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
             aria-label="Sign out"
