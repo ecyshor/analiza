@@ -61,9 +61,9 @@ export function Layout() {
       </aside>
 
       {/* Mobile top bar (padded for the notch when installed with a translucent status bar) */}
-      <div className="flex min-h-14 items-center justify-between px-4 pt-[env(safe-area-inset-top)] border-b border-white/10 bg-slate-900/40 md:hidden">
-        <Logo />
-        <div className="flex items-center gap-1">
+      <div className="flex min-h-14 shrink-0 items-center justify-between gap-2 px-4 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-2 border-b border-white/10 bg-slate-900/40 md:hidden">
+        <Logo className="shrink-0" />
+        <div className="flex min-w-0 items-center gap-1">
           <MobileNavLink to="/" end icon={<LayoutDashboard size={16} />} label="Dashboard" />
           <MobileNavLink to="/domains" icon={<Globe size={16} />} label="Domains" />
           <MobileNavLink to="/export" icon={<Download size={16} />} label="Export" />
@@ -119,9 +119,11 @@ function MobileNavLink({ to, icon, label, end }: { to: string; icon: ReactNode; 
     <RouterNavLink
       to={to}
       end={end}
+      aria-label={label}
+      title={label}
       className={({ isActive }) =>
         clsx(
-          'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors',
+          'flex items-center gap-1.5 rounded-lg p-2 sm:px-2.5 sm:py-1.5 text-xs font-medium transition-colors',
           isActive
             ? 'bg-violet-500/10 text-white'
             : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
@@ -131,7 +133,8 @@ function MobileNavLink({ to, icon, label, end }: { to: string; icon: ReactNode; 
       {({ isActive }) => (
         <>
           <span className={isActive ? 'text-violet-400' : 'text-slate-500'}>{icon}</span>
-          {label}
+          {/* Icon-only on phones: logo + three labels + actions overflow a 390px viewport */}
+          <span className="hidden sm:inline">{label}</span>
         </>
       )}
     </RouterNavLink>
