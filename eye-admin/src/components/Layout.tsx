@@ -60,7 +60,7 @@ export function Layout() {
         </div>
       </aside>
 
-      {/* Mobile top bar (padded for the notch when installed with a translucent status bar) */}
+      {/* Mobile top bar (safe-area padding is a no-op with the opaque status bar, kept for viewport-fit=cover browsers) */}
       <div className="flex min-h-14 shrink-0 items-center justify-between gap-2 px-4 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-2 border-b border-white/10 bg-slate-900/40 md:hidden">
         <Logo className="shrink-0" />
         <div className="flex min-w-0 items-center gap-1">
