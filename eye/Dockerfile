@@ -1,4 +1,4 @@
-FROM golang:1.20.2 AS build
+FROM golang:1.26 AS build
 
 WORKDIR /app
 
@@ -8,11 +8,11 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /analiza
+RUN CGO_ENABLED=0 go build -o /analiza
 RUN wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb -O /geo.mmdb
 
 ## Deploy
-FROM gcr.io/distroless/base-debian10
+FROM gcr.io/distroless/static-debian12
 
 WORKDIR /
 

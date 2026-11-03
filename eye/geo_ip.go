@@ -2,17 +2,25 @@ package main
 
 import (
 	"log"
-	"net"
+	"net/netip"
+	"os"
 
-	"github.com/oschwald/geoip2-golang"
+	"github.com/oschwald/geoip2-golang/v2"
 )
 
 type GeoReader struct {
 	geoDb *geoip2.Reader
 }
 
+func geoDbPath() string {
+	if path := os.Getenv("GEO_DB_PATH"); path != "" {
+		return path
+	}
+	return "/geo.mmdb"
+}
+
 func NewGeoReader() *GeoReader {
-	geoDb, err := geoip2.Open("/geo.mmdb")
+	geoDb, err := geoip2.Open(geoDbPath())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,15 +35,18 @@ func (reader *GeoReader) Close() {
 
 // use golang geo library to determine the country
 func (r *GeoReader) ResolveCountry(ip string) string {
-	solvedIp := net.ParseIP(ip)
-	if solvedIp == nil {
+	solvedIp, err := netip.ParseAddr(ip)
+	if err != nil {
 		log.Printf("Solved empty ip for %s", ip)
+		return ""
 	}
 	country, err := r.geoDb.Country(solvedIp)
 	if err != nil {
 		log.Printf("Failed to determine country %s", err)
 		return ""
-	} else {
-		return country.Country.IsoCode
 	}
+	if !country.HasData() {
+		return ""
+	}
+	return country.Country.ISOCode
 }
