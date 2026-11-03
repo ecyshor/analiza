@@ -57,6 +57,7 @@ params:
     cta_secondary:
       text: "View source"
       url: "https://github.com/ecyshor/analiza"
+    note: "No credit card needed. Create your account and start right away; we only ask for payment details when you get close to your free limit."
 
   features:
     title: "Everything you need, nothing you don't."
@@ -98,7 +99,7 @@ params:
 
   pricing:
     title: "Simple, transparent pricing."
-    subtitle: "Start for free and only pay after you use up your free tier. No credit card required, and your data is always exportable."
+    subtitle: "Create an account and start right away, no credit card needed. We only ask for payment details when you get close to your free limit, and your data is always exportable."
     plans:
       - title: "Free"
         price: "€0"
@@ -106,6 +107,7 @@ params:
         period: "forever"
         features:
           - "Up to 100k events / year"
+          - "No payment details needed"
           - "100% data ownership & export"
           - "Community Support"
         cta: "Start for free"
@@ -154,8 +156,10 @@ params:
         answer: "Add one script tag to the head of your site (see the install snippet above) with your site id. It works with any site — WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or plain HTML. No plugins, no build step."
       - question: "Does it work with single-page apps (SPAs)?"
         answer: "Yes. Client-side navigations via history.pushState and popstate are tracked automatically, so apps built with React, Vue, Next.js and similar frameworks get correct page views without extra code."
+      - question: "Do I need a credit card to sign up?"
+        answer: "No. Create your account and start tracking straight away with no payment details. We only ask for them when you get close to the free limit of 100k events per year, so you can use Analiza for free until then."
       - question: "How much does it cost?"
-        answer: "The Free plan is €0 and includes up to 100k events per year — no credit card required. Standard is €9 per year up to 1M events per year. Beyond that, Scale costs €7 per additional million events. See the pricing section above."
+        answer: "The Free plan is €0 and includes up to 100k events per year — no credit card required to sign up. Standard is €9 per year up to 1M events per year. Beyond that, Scale costs €7 per additional million events. See the pricing section above."
       - question: "Is Analiza open source? Can I self-host it?"
         answer: "Yes. The full stack — tracker, API, storage and dashboards — is open source on GitHub (https://github.com/ecyshor/analiza) and runs with Docker Compose. You can audit everything we claim, or self-host it entirely and point the tracker at your own server with the script's hostname attribute. The hosted service at analiza.dev is there if you'd rather not run it yourself."
       - question: "How is Analiza different from Google Analytics?"
