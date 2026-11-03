@@ -14,6 +14,13 @@ All data is stored and processed in the EU (Hetzner, Germany). The tracker sets 
 cookies, uses no localStorage and no cross-site/cross-device tracking, so the
 analytics itself needs no cookie banner, and there is no fingerprinting code.
 
+Your data is yours: from the Export page in the dashboard (https://app.analiza.dev)
+you can request a full export of all your analytics data at any time, on every plan
+including Free, and we email it to you once ready. The full stack is also open source
+(https://github.com/ecyshor/analiza) and can be self-hosted with Docker Compose
+(`make start` per the repo README); the tracker's `hostname` attribute sends events
+to your own API endpoint instead of api.analiza.dev.
+
 ## Features
 
 {{ range .Site.Params.features.items }}- **{{ .title }}**: {{ .description }}

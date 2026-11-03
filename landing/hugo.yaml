@@ -74,6 +74,12 @@ params:
       - title: Open Source
         icon: "code"
         description: "Verify our claims yourself. The code is open source and available for anyone to inspect."
+      - title: Your Data, Portable
+        icon: "download"
+        description: "Request a full export of all your analytics data from the dashboard at any time, on every plan. Take it wherever you want — no lock-in."
+      - title: Self-Host If You Want
+        icon: "server"
+        description: "Prefer to run it yourself? The whole stack is open source and runs with Docker Compose. Point the tracker at your own server with one attribute."
 
   dashboard:
     title: "See it in action."
@@ -92,7 +98,7 @@ params:
 
   pricing:
     title: "Simple, transparent pricing."
-    subtitle: "Start for free and only pay after you use up your free tier. No credit card required."
+    subtitle: "Start for free and only pay after you use up your free tier. No credit card required, and your data is always exportable."
     plans:
       - title: "Free"
         price: "€0"
@@ -100,7 +106,7 @@ params:
         period: "forever"
         features:
           - "Up to 100k events / year"
-          - "100% Data Ownership"
+          - "100% data ownership & export"
           - "Community Support"
         cta: "Start for free"
         url: "https://app.analiza.dev"
@@ -112,7 +118,7 @@ params:
         unitText: "year"
         features:
           - "Up to 1M events / year"
-          - "100% Data Ownership"
+          - "100% data ownership & export"
           - "Email Support"
         cta: "Choose Standard"
         url: "https://app.analiza.dev"
@@ -124,7 +130,7 @@ params:
         unitText: "additional million events"
         features:
           - "Pay as you grow"
-          - "100% Data Ownership"
+          - "100% data ownership & export"
           - "Priority Support"
         cta: "Contact us"
         url: "mailto:support@analiza.dev"
@@ -138,6 +144,8 @@ params:
         answer: "Analiza is a lightweight, privacy-first web analytics tool. It gives you the essentials — visitors, page views, top pages and referrers — without cookies, fingerprinting or cross-site tracking."
       - question: "Is Analiza GDPR compliant? Where is my data stored?"
         answer: "All data is stored and processed in the EU (Hetzner, Germany), so it never leaves the European Union. Analiza is designed so that no cookies, localStorage or cross-site/cross-device tracking are used, which is why the analytics itself needs no cookie banner. For your specific legal situation, please consult your own legal advice."
+      - question: "Can I export my data and leave?"
+        answer: "Yes. From the Export page in the dashboard you can request a full export of all your analytics data at any time, on every plan including Free, and we email it to you. Your data is yours — take it to another tool, or run Analiza yourself (see self-hosting below)."
       - question: "Do I need a cookie banner?"
         answer: "Not for Analiza. The tracker sets no cookies and stores nothing in the browser, so the analytics itself does not require a consent banner. Your site may still need one for other services you use — consult your own legal advice for your specific case."
       - question: "What data does the tracker collect?"
@@ -148,10 +156,10 @@ params:
         answer: "Yes. Client-side navigations via history.pushState and popstate are tracked automatically, so apps built with React, Vue, Next.js and similar frameworks get correct page views without extra code."
       - question: "How much does it cost?"
         answer: "The Free plan is €0 and includes up to 100k events per year — no credit card required. Standard is €9 per year up to 1M events per year. Beyond that, Scale costs €7 per additional million events. See the pricing section above."
-      - question: "Is Analiza open source? Can I self-host or inspect the code?"
-        answer: "Yes — the full source code is open on GitHub at https://github.com/ecyshor/analiza, so you can inspect and audit everything we claim about the tracker and the data handling. Self-hosted setups are not officially supported; the hosted service at analiza.dev is the supported way to use it."
+      - question: "Is Analiza open source? Can I self-host it?"
+        answer: "Yes. The full stack — tracker, API, storage and dashboards — is open source on GitHub (https://github.com/ecyshor/analiza) and runs with Docker Compose. You can audit everything we claim, or self-host it entirely and point the tracker at your own server with the script's hostname attribute. The hosted service at analiza.dev is there if you'd rather not run it yourself."
       - question: "How is Analiza different from Google Analytics?"
-        answer: "Analiza doesn't use cookies, doesn't track users across sites or devices, and doesn't build advertising profiles. All data stays in the EU, the script is about 1 KB, and the dashboard shows simple aggregate metrics instead of user-level reports. If you need ad measurement and personalization, Google Analytics is built for that — Analiza is the lightweight, privacy-first alternative."
+        answer: "Analiza doesn't use cookies, doesn't track users across sites or devices, and doesn't build advertising profiles. All data stays in the EU, the script is about 1 KB, your data is always exportable and the whole stack can be self-hosted, and the dashboard shows simple aggregate metrics instead of user-level reports. If you need ad measurement and personalization, Google Analytics is built for that — Analiza is the lightweight, privacy-first alternative."
 
   footer:
     copyright: "Analiza.dev"
