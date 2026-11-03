@@ -40,6 +40,7 @@
                 <a href="{{ .Site.Params.hero.cta_primary.url }}" class="btn btn-primary">{{ .Site.Params.hero.cta_primary.text }}</a>
                 <a href="{{ .Site.Params.hero.cta_secondary.url }}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">{{ .Site.Params.hero.cta_secondary.text }}</a>
             </div>
+            {{ with .Site.Params.hero.note }}<p class="hero-note">{{ . }}</p>{{ end }}
         </div>
     </section>
 

@@ -43,7 +43,7 @@ and event type — page view / page hidden.)
 
 {{ range .Site.Params.pricing.plans }}- **{{ .title }}** — {{ .price }} {{ .period }}: {{ delimit .features "; " }}. Sign up: {{ .url }}
 {{ end }}
-No credit card required for the Free tier.
+No credit card or payment details are needed to create an account and start on the Free tier; payment details are only requested when you get close to the free limit.
 
 ## FAQ
 
