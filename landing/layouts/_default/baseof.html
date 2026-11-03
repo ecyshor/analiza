@@ -3,40 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .Site.Title }}</title>
-    <meta name="description" content="{{ .Site.Params.description }}">
+    {{ $pageTitle := .Site.Title }}
+    {{ if not .IsHome }}{{ $pageTitle = printf "%s | Analiza" (.Title | default "Page not found") }}{{ end }}
+    {{ $pageDescription := .Description | default .Site.Params.description }}
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageDescription }}">
     {{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
     <link rel="canonical" href="{{ .Permalink | default .Site.BaseURL }}">
-    <meta name="robots" content="index, follow">
-    {{ if .Site.Params.openGraph }}
-    {{ template "_internal/opengraph.html" . }}
-    {{ template "_internal/twitter_cards.html" . }}
+    {{ if eq .Kind "404" }}
+    <meta name="robots" content="noindex, follow">
+    {{ else }}
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     {{ end }}
-    
-    <!-- Schema.org JSON-LD for AI Search Optimization -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Analiza",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web",
-      "description": "{{ .Site.Params.description }}",
-      "url": "{{ .Site.BaseURL }}",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "EUR",
-        "description": "Free tier available or low cost for high traffic."
-      },
-      "featureList": [
-        "EU Hosted",
-        "GDPR Compliant",
-        "No Cookie",
-        "Basic Analytics"
-      ]
-    }
-    </script>
+    <meta name="theme-color" content="#0F172A">
+    <meta name="author" content="Analiza">
+    <link rel="apple-touch-icon" href="{{ "favicon.png" | relURL }}">
+    <link rel="alternate" type="text/markdown" href="{{ "llms.txt" | relURL }}" title="LLM-friendly summary">
+
+    {{ if .Site.Params.openGraph }}
+    <meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
+    <meta property="og:site_name" content="Analiza">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:url" content="{{ .Permalink | default .Site.BaseURL }}">
+    {{ range .Site.Params.images }}
+    <meta property="og:image" content="{{ . | absURL }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Analiza — Analytics that respect your users. EU hosted, no cookies, open source.">
+    {{ end }}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $pageDescription }}">
+    {{ range .Site.Params.images }}<meta name="twitter:image" content="{{ . | absURL }}">{{ end }}
+    {{ end }}
+
+    <!-- Schema.org JSON-LD @graph for SEO and AI search (generated with jsonify so escaping is safe) -->
+    {{ $base := .Site.BaseURL }}
+    {{ $org := dict "@type" "Organization"
+        "@id" (printf "%s#organization" $base)
+        "name" "Analiza"
+        "url" $base
+        "logo" (printf "%simages/logos/png/logo-color.png" $base)
+        "email" "support@analiza.dev"
+        "sameAs" (slice "https://github.com/ecyshor/analiza") }}
+    {{ $website := dict "@type" "WebSite"
+        "@id" (printf "%s#website" $base)
+        "name" "Analiza"
+        "url" $base
+        "inLanguage" "en-US"
+        "publisher" (dict "@id" (printf "%s#organization" $base)) }}
+    {{ $graph := slice $org $website }}
+    {{ if .IsHome }}
+    {{ $featureList := slice }}
+    {{ range .Site.Params.features.items }}{{ $featureList = $featureList | append .title }}{{ end }}
+    {{ $offers := slice }}
+    {{ range .Site.Params.pricing.plans }}
+      {{ $offer := dict "@type" "Offer"
+          "name" .title
+          "price" .priceValue
+          "priceCurrency" "EUR"
+          "url" .url
+          "description" (printf "%s %s — %s" .price .period (delimit .features "; ")) }}
+      {{ with .unitText }}{{ $offer = merge $offer (dict "eligibleQuantity" (dict "@type" "QuantitativeValue" "value" 1 "unitText" .)) }}{{ end }}
+      {{ $offers = $offers | append $offer }}
+    {{ end }}
+    {{ $app := dict "@type" "SoftwareApplication"
+        "@id" (printf "%s#software" $base)
+        "name" "Analiza"
+        "url" $base
+        "applicationCategory" "BusinessApplication"
+        "applicationSubCategory" "Web analytics"
+        "operatingSystem" "Web"
+        "description" .Site.Params.description
+        "isAccessibleForFree" true
+        "featureList" $featureList
+        "offers" $offers
+        "sameAs" (slice "https://github.com/ecyshor/analiza") }}
+    {{ $source := dict "@type" "SoftwareSourceCode"
+        "name" "Analiza"
+        "codeRepository" "https://github.com/ecyshor/analiza" }}
+    {{ $faqEntities := slice }}
+    {{ range .Site.Params.faq.items }}
+      {{ $faqEntities = $faqEntities | append (dict "@type" "Question"
+          "name" .question
+          "acceptedAnswer" (dict "@type" "Answer" "text" .answer)) }}
+    {{ end }}
+    {{ $faq := dict "@type" "FAQPage" "mainEntity" $faqEntities }}
+    {{ $graph = $graph | append $app $source $faq }}
+    {{ end }}
+    <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" $graph | jsonify | safeJS }}</script>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ "favicon.png" | relURL }}">
     

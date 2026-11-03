@@ -11,7 +11,7 @@
     <div class="container navbar-container">
         <a href="/" class="brand">
             {{ if .Site.Params.navbar.logoImage }}
-            <img src="{{ printf "/images/%s" .Site.Params.navbar.logoImage | relURL }}" alt="{{ .Site.Params.navbar.logoText }}" height="40" class="logo-img">
+            <img src="{{ printf "/images/%s" .Site.Params.navbar.logoImage | relURL }}" alt="Analiza logo" width="40" height="40" class="logo-img">
             <span class="brand-name">{{ .Site.Params.navbar.logoText }}</span>
             {{ else }}
             {{ .Site.Params.navbar.logoText }}
@@ -21,6 +21,7 @@
             <a href="#dashboard" class="nav-link nav-anchor">Live demo</a>
             <a href="#features" class="nav-link nav-anchor">Features</a>
             <a href="#pricing" class="nav-link nav-anchor">Pricing</a>
+            <a href="#faq" class="nav-link nav-anchor">FAQ</a>
             {{ range .Site.Params.navbar.links }}
             <a href="{{ .url }}" class="nav-link nav-cta">{{ .title }}</a>
             {{ end }}
@@ -65,13 +66,14 @@
                     <!-- CRITICAL: Keep iframe as requested -->
                     <iframe
                         id="analytics-dashboard"
-                        title="Analytics Dashboard"
+                        title="Analiza live demo analytics dashboard"
                         src="https://metabase.analiza.dev/public/dashboard/b206e5af-2c29-4486-aa96-0d269d5096c8#theme=night&bordered=false&titled=false&background=false"
                         loading="lazy"
                         allowtransparency
                     ></iframe>
                 </div>
             </div>
+            <p class="dashboard-note">{{ .Site.Params.dashboard.description }}</p>
             <script src="https://metabase.analiza.dev/app/iframeResizer.js"></script>
             <script>document.getElementById('analytics-dashboard').addEventListener('load', function () { var p = document.getElementById('demo-placeholder'); if (p) { p.classList.add('hidden'); } if (window.iFrameResize) { iFrameResize({ checkOrigin: false }, this); } });</script>
         </div>
@@ -153,6 +155,25 @@
             </div>
         </div>
     </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-heading text-center">
+                <h2>{{ .Site.Params.faq.title }}</h2>
+                <p>{{ .Site.Params.faq.subtitle }}</p>
+            </div>
+
+            <div class="faq-list">
+                {{ range .Site.Params.faq.items }}
+                <details class="faq-item">
+                    <summary>{{ .question }}</summary>
+                    <p>{{ .answer }}</p>
+                </details>
+                {{ end }}
+            </div>
+        </div>
+    </section>
 </main>
 
 <footer class="footer">
@@ -160,7 +181,7 @@
         <div class="copyright">&copy; {{ now.Year }} {{ .Site.Params.footer.copyright }}</div>
         <div class="socials">
             {{ range .Site.Params.footer.socials }}
-            <a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .platform }}</a>
+            <a href="{{ .url }}"{{ if strings.HasPrefix .url "http" }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .platform }}</a>
             {{ end }}
         </div>
     </div>
