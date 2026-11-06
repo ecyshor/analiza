@@ -5,6 +5,7 @@ export function useAuth0() {
   return {
     isAuthenticated: true,
     isLoading: false,
+    error: undefined,
     user: {
       name: 'E2E User',
       email: 'test@analiza.dev',
