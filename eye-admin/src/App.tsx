@@ -6,6 +6,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Domains } from './pages/Domains'
 import { Export } from './pages/Export'
 import { Login } from './pages/Login'
+import { AuthCallback } from './pages/AuthCallback'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ApiProvider } from './components/ApiProvider'
 import { FullScreenLoader } from './components/FullScreenLoader'
@@ -80,7 +81,7 @@ function AppRoutes() {
 				<Route path="domains" element={<Domains />} />
 				<Route path="export" element={<Export />} />
 			</Route>
-			<Route path="/auth-callback" element={<FullScreenLoader message="Authenticating..." />} />
+			<Route path="/auth-callback" element={<AuthCallback />} />
 		</Routes>
 	)
 }
