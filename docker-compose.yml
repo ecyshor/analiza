@@ -212,9 +212,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: super_secret_password
       POSTGRES_DB: postgres
-    command: ["postgres", "-c", "log_statement=all"]
+    command: ["postgres", "-c", "log_statement=ddl", "-c", "log_min_duration_statement=1000", "-c", "log_parameter_max_length=0"]
     labels:
       - "logging_exclude=true"
+    logging:
+      driver: json-file
+      options: { max-size: "50m", max-file: "3" }
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d/
       - type: bind
