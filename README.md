@@ -33,6 +33,24 @@ For local development, you must update your `/etc/hosts` file with the following
 ### 2. Environment Variables
 Local development relies on the `.env.private` files inside the respective project directories (such as `eye-admin`). These are not checked into Git. Make sure to configure them per the documentation in the subfolders.
 
+#### Deployment environment variables (`.env` next to `docker-compose.yml`)
+All of these have working defaults for local dev and CI; production must override them in `.env`:
+
+| Variable | Default | Used for |
+| --- | --- | --- |
+| `ANALIZA_POSTGRES_PASSWORD` | `super_secret_password` | `POSTGRES_PASSWORD` and both flyway `-password` args |
+| `ANALIZA_EYE_PG_PASSWORD` | `super_secret_password` | eye's `POSTGRES_PASSWORD` env |
+| `ANALIZA_CH_ADMIN_PASSWORD` | `eye_super_duper_password` | ClickHouse `CLICKHOUSE_PASSWORD` |
+| `ANALIZA_EYE_CH_PASSWORD` | `eye_super_password` | eye's `CLICKHOUSE_PASSWORD` env |
+| `ANALIZA_METABASE_DB_PASSWORD` | `metabase_super_password` | Metabase `MB_DB_PASS` |
+| `ANALIZA_HASH_SEED` | hex literal in `eye/config.go` | eye's visitor-hash seed (must be 64 hex chars) |
+| `ANALIZA_HTTP_BIND` | `0.0.0.0` | traefik port mapping host (`"${ANALIZA_HTTP_BIND:-0.0.0.0}:8080:80"`) |
+| `ANALIZA_ADMIN_CORS_ORIGINS` | app origins list | PostgREST router CORS allow-origin list |
+| `ANALIZA_METABASE_ADMIN_ALLOWLIST` | `0.0.0.0/0,::/0` | traefik `ipAllowList` source ranges for the non-embed Metabase routes — restrict this in production |
+| `DOCKER_SOCK` | `/var/run/docker.sock` | socket mounted into the `docker-socket-proxy` containers |
+
+The swagger UI (`openapi.dev.analiza.lan`) only runs under the compose `dev` profile, which the Makefile start targets enable; production `docker compose up` does not start it.
+
 ### 3. Build & Run
 To run the complete stack:
 ```bash

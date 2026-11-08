@@ -1,11 +1,35 @@
 services:
   promtail:
-    image:  grafana/promtail:latest
+    image: grafana/promtail:3.6.11
     container_name: promtail
     volumes:
       - ./promtail.yaml:/etc/promtail/docker-config.yaml
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
     command: -config.file=/etc/promtail/docker-config.yaml -config.expand-env=true
     environment:
       - PROMTAIL_CLIENT_URL=${PROMTAIL_CLIENT_URL}
+    networks:
+      - default
+      - socket-proxy
+    depends_on:
+      - docker-socket-proxy
+
+  # Read-only proxy for the Docker socket: promtail never mounts the socket
+  # itself and can only list containers through the proxy.
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy:v0.5.0
+    environment:
+      - CONTAINERS=1
+      - NETWORKS=1
+      - POST=0
+    volumes:
+      - ${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock:ro
+    networks:
+      - socket-proxy
+
+networks:
+  default: {}
+  # Internal-only network shared between promtail and the docker socket proxy.
+  socket-proxy:
+    internal: true
+

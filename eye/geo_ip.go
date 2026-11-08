@@ -35,6 +35,9 @@ func (reader *GeoReader) Close() {
 
 // use golang geo library to determine the country
 func (r *GeoReader) ResolveCountry(ip string) string {
+	if r == nil || r.geoDb == nil {
+		return ""
+	}
 	solvedIp, err := netip.ParseAddr(ip)
 	if err != nil {
 		log.Printf("Solved empty ip for %s", ip)

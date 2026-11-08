@@ -49,16 +49,16 @@ func NewDbDomainChecker(dbURL string) (*DomainChecker, error) {
 
 func (dc *DomainChecker) CheckDomainForTenant(ctx context.Context, tenantID, domain string) (bool, error) {
 	cacheKey := tenantID + ":" + domain
-	domainResult, ok := dc.domainCache.Get(cacheKey)
-	if !ok {
-		result, err := dc.checkTenantDomainFromData(ctx, tenantID, domain)
-		if err != nil {
-			dc.domainCache.Set(cacheKey, result, cacheExpiry)
-		}
-		return result, err
-	} else {
-		return domainResult.(bool), nil
+	if cached, ok := dc.checkCache.Get(cacheKey); ok {
+		return cached.(bool), nil
 	}
+	result, err := dc.checkTenantDomainFromData(ctx, tenantID, domain)
+	if err != nil {
+		// Never cache errors: a transient database failure must not poison the cache.
+		return result, err
+	}
+	dc.checkCache.Set(cacheKey, result, cacheExpiry)
+	return result, nil
 }
 
 func (dc *DomainChecker) checkTenantDomainFromData(ctx context.Context, tenantID, domain string) (bool, error) {
