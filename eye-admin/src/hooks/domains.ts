@@ -4,7 +4,7 @@ import { createDomain, deleteDomain, getDomains, type Domain } from '../api'
 export const TRACKER_URL =
   import.meta.env.VITE_TRACKER_URL ||
   import.meta.env.REACT_APP_TRACKER_URL ||
-  'https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js'
+  'https://cdn.analiza.dev/analiza.js'
 
 // The tracker reads the tenant UUID from the script tag's `tenant` attribute;
 // the event's domain is taken from the request Origin on the server side.
