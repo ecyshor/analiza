@@ -139,7 +139,7 @@ services:
       - "traefik.port=3000"
       # Public embed endpoints: no IP restriction, higher priority so they
       # win over the admin router below.
-      - "traefik.http.routers.metabase-public.rule=Host(`metabase.analiza.dev`) || Host(`metabase.dev.analiza.lan`) && (PathPrefix(`/embed`) || PathPrefix(`/public`) || PathPrefix(`/app`) || PathPrefix(`/api/embed`) || PathPrefix(`/api/public`) || Path(`/api/session/properties`) || Path(`/api/geojson`) || Path(`/api/health`))"
+      - "traefik.http.routers.metabase-public.rule=(Host(`metabase.analiza.dev`) || Host(`metabase.dev.analiza.lan`)) && (PathPrefix(`/embed`) || PathPrefix(`/public`) || PathPrefix(`/app`) || PathPrefix(`/api/embed`) || PathPrefix(`/api/public`) || Path(`/api/session/properties`) || Path(`/api/geojson`) || Path(`/api/health`))"
       - "traefik.http.routers.metabase-public.entrypoints=web"
       - "traefik.http.routers.metabase-public.priority=100"
       # Everything else on the metabase hosts is admin-only, restricted by IP.

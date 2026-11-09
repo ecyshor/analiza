@@ -4,10 +4,13 @@ import { createDomain, deleteDomain, getDomains, type Domain } from '../api'
 // The tracker is pinned to the commit that last touched tracker/analiza.js,
 // served non-minified from jsDelivr, with subresource integrity so a
 // compromised CDN or tag cannot serve different code.
+const PINNED_TRACKER_URL =
+  'https://cdn.jsdelivr.net/gh/ecyshor/analiza@edbfc622baa5332b248ed4f15553a1917dfeb9a6/tracker/analiza.js'
+
 export const TRACKER_URL =
   import.meta.env.VITE_TRACKER_URL ||
   import.meta.env.REACT_APP_TRACKER_URL ||
-  'https://cdn.jsdelivr.net/gh/ecyshor/analiza@edbfc622baa5332b248ed4f15553a1917dfeb9a6/tracker/analiza.js'
+  PINNED_TRACKER_URL
 
 export const TRACKER_INTEGRITY =
   'sha384-782mWdFBLTPCCt/X6gdEItCq88O+HLOUKGrjjftVmdwXpDBhVS/s2gGnVVqmHWfV'
@@ -15,7 +18,7 @@ export const TRACKER_INTEGRITY =
 // The tracker reads the tenant UUID from the script tag's `tenant` attribute;
 // the event's domain is taken from the request Origin on the server side.
 export const installSnippet = (tenantId?: string) =>
-  `<script defer src="${TRACKER_URL}" integrity="${TRACKER_INTEGRITY}" crossorigin="anonymous" tenant="${tenantId ?? ''}"></script>`
+  `<script defer src="${TRACKER_URL}"${TRACKER_URL === PINNED_TRACKER_URL ? ` integrity="${TRACKER_INTEGRITY}" crossorigin="anonymous"` : ''} tenant="${tenantId ?? ''}"></script>`
 
 // eye matches the event's Origin host against the registered domain and every
 // parent of it, so registering "example.com" also covers "www.example.com" and
