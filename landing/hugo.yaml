@@ -91,7 +91,7 @@ params:
   install:
     title: "Install in a minute."
     subtitle: "One line in the head of your site, and you're done. No plugins, no cookies, no build step."
-    snippet: '<script defer src="https://cdn.jsdelivr.net/gh/ecyshor/analiza@main/tracker/analiza.min.js" tenant="YOUR-SITE-ID"></script>'
+    snippet: '<script defer src="https://cdn.analiza.dev/analiza.js" tenant="YOUR-SITE-ID"></script>'
     platforms: "Works with WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or any HTML site."
     cta:
       text: "Add your site"

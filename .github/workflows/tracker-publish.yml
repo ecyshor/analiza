@@ -1,0 +1,50 @@
+name: Tracker Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tracker/analiza.js'
+      - '.github/workflows/tracker-publish.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tracker
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Set up Node.js
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: tracker/package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Minify
+      run: npx terser analiza.js --compress --mangle -o "$RUNNER_TEMP/analiza.js"
+
+    - name: Verify minified output
+      run: |
+        test -s "$RUNNER_TEMP/analiza.js"
+        grep -qF 'api.analiza.dev' "$RUNNER_TEMP/analiza.js"
+
+    - name: Upload to CDN storage
+      env:
+        BUNNY_STORAGE_ZONE: analiza-tracker
+        BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+      run: |
+        curl --fail-with-body -sS -X PUT "https://storage.bunnycdn.com/$BUNNY_STORAGE_ZONE/analiza.js" -H "AccessKey: $BUNNY_STORAGE_PASSWORD" -H "Content-Type: application/octet-stream" --data-binary @"$RUNNER_TEMP/analiza.js"
