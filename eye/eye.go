@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
@@ -34,6 +36,12 @@ const (
 	View UserEventType = "view"
 	Gone UserEventType = "gone"
 )
+
+// maxEventBodyBytes caps the /eye request body (64 KiB).
+const maxEventBodyBytes = 64 * 1024
+
+// dropLogInterval is the minimum time between "events channel full" log lines.
+const dropLogInterval = time.Minute
 
 type UserEvent struct {
 	EventType UserEventType `json:"t"`
@@ -64,10 +72,35 @@ type Server struct {
 	events    chan Event
 	seed      []byte
 	geoReader *GeoReader
+
+	dropMu        sync.Mutex
+	droppedEvents int
+	lastDropLog   time.Time
+}
+
+// noteDroppedEvent counts a dropped event and logs at most once per
+// dropLogInterval, so a full channel cannot flood the logs.
+func (s *Server) noteDroppedEvent() {
+	s.dropMu.Lock()
+	defer s.dropMu.Unlock()
+	s.droppedEvents++
+	if now := time.Now(); now.Sub(s.lastDropLog) >= dropLogInterval {
+		log.Printf("Events channel full: dropped %d events so far", s.droppedEvents)
+		s.lastDropLog = now
+	}
+}
+
+func (s *Server) droppedCount() int {
+	s.dropMu.Lock()
+	defer s.dropMu.Unlock()
+	return s.droppedEvents
 }
 
 func main() {
-	config := ReadConfig()
+	config, err := ReadConfig()
+	if err != nil {
+		log.Fatalf("Invalid configuration: %s", err)
+	}
 	// Create the ClickHouse connection pool with the given options
 	conn, err := clickhouse.Open(&clickhouse.Options{
 		Addr: []string{fmt.Sprintf("%s:9000", config.clickhouse.host)},
@@ -103,17 +136,12 @@ func main() {
 	initTables(conn)
 	// Create the HTTP server with the connection pool as part of the state
 	eventChannel := make(chan Event, 100)
-	seedHash, err := hex.DecodeString("f308a5663791e49baa095c4c8a2bc046dbd79f07065f59c713817c5443b46d86")
-	if err != nil {
-		log.Printf("Failed to decode seed: %s", err)
-		panic(err)
-	}
 	geoReader := NewGeoReader()
 	defer geoReader.Close()
 	server := &Server{
 		conn:      conn,
 		events:    eventChannel,
-		seed:      seedHash,
+		seed:      config.hashSeed,
 		geoReader: geoReader,
 	}
 	// Create a channel to queue the rows for batch inserts
@@ -130,9 +158,18 @@ func main() {
 	http.HandleFunc("/eye", server.handleEye)
 	http.HandleFunc("/health", server.health)
 
-	// Start the HTTP server
+	// Start the HTTP server with explicit timeouts so slow or abusive
+	// clients cannot hold connections open forever.
+	srv := &http.Server{
+		Addr:              ":8080",
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    1 << 20,
+	}
 	log.Println("Starting HTTP server on port 8080...")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := srv.ListenAndServe(); err != nil {
 		panic(err)
 	}
 }
@@ -143,9 +180,28 @@ func (s *Server) health(w http.ResponseWriter, request *http.Request) {
 }
 
 func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
-	// Parse the JSON request body
+	// The tracker only ever POSTs to /eye; OPTIONS stays available for CORS preflight.
+	switch request.Method {
+	case http.MethodPost, http.MethodOptions:
+	default:
+		w.Header().Set("Allow", "POST, OPTIONS")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	if request.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Parse the JSON request body, capped at 64 KiB
+	request.Body = http.MaxBytesReader(w, request.Body, maxEventBodyBytes)
 	var userEvent UserEvent
 	if err := json.NewDecoder(request.Body).Decode(&userEvent); err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			http.Error(w, "Request body too large", http.StatusRequestEntityTooLarge)
+			return
+		}
 		http.Error(w, "Invalid JSON request body", http.StatusBadRequest)
 		return
 	}
@@ -176,14 +232,18 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	// Set the insertion time to the current time
 	now := time.Now()
 	event.InsertTime = now
-	month := now.Format("January")
+	event.UserIdentifier = s.visitorIdentifier(now, request.UserAgent(), request.Header.Get("Accept-Language"), realIp)
 
-	idHash := highwayhash.Sum([]byte(month+request.UserAgent()+request.Header.Get("Accept-Language")+realIp), s.seed)
-	idContent := hex.EncodeToString(idHash[:])
-
-	event.UserIdentifier = idContent
 	if event.Domain != "" {
-		s.events <- event
+		// Never block on the events channel: if it is full, drop the event
+		// and tell the client to back off.
+		select {
+		case s.events <- event:
+		default:
+			s.noteDroppedEvent()
+			http.Error(w, "Event queue is full, event dropped", http.StatusServiceUnavailable)
+			return
+		}
 	} else {
 		log.Printf("Event with empty domain: %+v", event)
 	}
@@ -191,6 +251,15 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 	// Write a response back to the client
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("OK"))
+}
+
+// visitorIdentifier hashes the year-month period together with the request
+// characteristics, so visitors are counted per month and the same month in
+// different years does not collide.
+func (s *Server) visitorIdentifier(now time.Time, userAgent, acceptLanguage, realIP string) string {
+	period := now.Format("2006-01")
+	idHash := highwayhash.Sum([]byte(period+userAgent+acceptLanguage+realIP), s.seed)
+	return hex.EncodeToString(idHash[:])
 }
 
 type utmParams struct {

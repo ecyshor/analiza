@@ -42,3 +42,4 @@ dist
 .gemini/
 gha-creds-*.json
 pgdata
+/data/
