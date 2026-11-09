@@ -4,6 +4,7 @@ services:
     labels:
       logging_jobname: "traefik"
     container_name: "traefik"
+    restart: unless-stopped
     command:
       #- "--log.level=DEBUG"
       - "--providers.docker=true"
@@ -37,12 +38,7 @@ services:
       - socket-proxy
     labels:
       - "logging_exclude=true"
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+    restart: unless-stopped
 
   eye:
     build:
