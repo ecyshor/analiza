@@ -18,12 +18,12 @@
             {{ end }}
         </a>
         <div class="nav-links">
-            <a href="#dashboard" class="nav-link nav-anchor">Live demo</a>
+            <a href="#dashboard" class="nav-link nav-anchor" data-analiza-click="nav-live-demo">Live demo</a>
             <a href="#features" class="nav-link nav-anchor">Features</a>
             <a href="#pricing" class="nav-link nav-anchor">Pricing</a>
             <a href="#faq" class="nav-link nav-anchor">FAQ</a>
             {{ range .Site.Params.navbar.links }}
-            <a href="{{ .url }}" class="nav-link nav-cta">{{ .title }}</a>
+            <a href="{{ .url }}" class="nav-link nav-cta" data-analiza-click="nav-{{ .title | urlize }}">{{ .title }}</a>
             {{ end }}
         </div>
     </div>
@@ -37,8 +37,8 @@
             <h1 class="hero-title">{{ .Site.Params.hero.title }}</h1>
             <p class="hero-subtitle">{{ .Site.Params.hero.subtitle }}</p>
             <div class="hero-cta-group">
-                <a href="{{ .Site.Params.hero.cta_primary.url }}" class="btn btn-primary">{{ .Site.Params.hero.cta_primary.text }}</a>
-                <a href="{{ .Site.Params.hero.cta_secondary.url }}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">{{ .Site.Params.hero.cta_secondary.text }}</a>
+                <a href="{{ .Site.Params.hero.cta_primary.url }}" class="btn btn-primary" data-analiza-click="hero-signup">{{ .Site.Params.hero.cta_primary.text }}</a>
+                <a href="{{ .Site.Params.hero.cta_secondary.url }}" class="btn btn-outline" data-analiza-click="hero-source" target="_blank" rel="noopener noreferrer">{{ .Site.Params.hero.cta_secondary.text }}</a>
             </div>
             {{ with .Site.Params.hero.note }}<p class="hero-note">{{ . }}</p>{{ end }}
         </div>
@@ -91,7 +91,7 @@
                 <pre class="install-snippet"><code>{{ .Site.Params.install.snippet | htmlEscape | safeHTML }}</code></pre>
                 <p class="install-platforms">{{ .Site.Params.install.platforms }}</p>
                 <p class="install-note">{{ .Site.Params.install.note }}</p>
-                <a href="{{ .Site.Params.install.cta.url }}" class="btn btn-primary">{{ .Site.Params.install.cta.text }}</a>
+                <a href="{{ .Site.Params.install.cta.url }}" class="btn btn-primary" data-analiza-click="install-signup">{{ .Site.Params.install.cta.text }}</a>
             </div>
         </div>
     </section>
@@ -155,7 +155,7 @@
                         </li>
                         {{ end }}
                     </ul>
-                    <a href="{{ .url }}" class="btn {{ if .highlight }}btn-primary{{ else }}btn-secondary{{ end }} btn-block">{{ .cta }}</a>
+                    <a href="{{ .url }}" class="btn {{ if .highlight }}btn-primary{{ else }}btn-secondary{{ end }} btn-block" data-analiza-click="pricing-{{ .title | urlize }}">{{ .cta }}</a>
                 </div>
                 {{ end }}
             </div>
