@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { AlertCircle, Code, Globe, Trash2 } from 'lucide-react'
 import type { Domain } from '../api'
 import { AddDomainForm } from '../components/AddDomainForm'
+import { ClickTrackingGuide } from '../components/ClickTrackingGuide'
 import { GettingStarted } from '../components/GettingStarted'
 import { InstallGuide } from '../components/InstallGuide'
 import { SnippetBlock } from '../components/SnippetBlock'
@@ -145,6 +146,9 @@ export function Domains() {
                           <div className="min-w-0 max-w-full space-y-4">
                             <SnippetBlock tenantId={domain.tenant_id} />
                             <InstallGuide tenantId={domain.tenant_id} />
+                            <div className="border-t border-white/10 pt-4">
+                              <ClickTrackingGuide />
+                            </div>
                           </div>
                         </td>
                       </tr>

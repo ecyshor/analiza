@@ -26,6 +26,9 @@ test('Load app, check dashboard, create and validate domain', async ({ page }) =
 
   // The install section of the new domain expands automatically
   await expect(page.getByRole('tab', { name: 'WordPress' })).toBeVisible();
+
+  // The click-tracking guide is shown in the expanded install row
+  await expect(page.getByRole('heading', { name: 'Track clicks' })).toBeVisible();
 });
 
 test('Export page opens from nav and validates the email inline', async ({ page }) => {

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import type { Domain } from '../api'
 import { useAddDomain } from '../hooks/domains'
 import { AddDomainForm } from './AddDomainForm'
+import { ClickTrackingGuide } from './ClickTrackingGuide'
 import { InstallGuide } from './InstallGuide'
 import { SnippetBlock } from './SnippetBlock'
 
@@ -56,6 +57,14 @@ export function GettingStarted({ domains, showAddForm = true }: { domains: Domai
               </p>
               <SnippetBlock tenantId={firstDomain.tenant_id} />
               <InstallGuide tenantId={firstDomain.tenant_id} />
+              <details>
+                <summary className="cursor-pointer select-none rounded text-sm text-slate-400 transition-colors hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/60">
+                  Optional: track clicks on links and buttons
+                </summary>
+                <div className="mt-3 border-t border-white/10 pt-4">
+                  <ClickTrackingGuide />
+                </div>
+              </details>
             </div>
           ) : (
             <p className="text-sm text-slate-500">

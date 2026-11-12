@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { installSnippet } from '../hooks/domains'
 
-export function SnippetBlock({ tenantId, code }: { tenantId?: string; code?: string }) {
+export function SnippetBlock({ tenantId, code, label }: { tenantId?: string; code?: string; label?: string }) {
   const [copied, setCopied] = useState(false)
   const snippet = code ?? installSnippet(tenantId)
 
@@ -18,7 +18,7 @@ export function SnippetBlock({ tenantId, code }: { tenantId?: string; code?: str
 
   return (
     <div className="relative min-w-0 max-w-full rounded-lg border border-white/10 bg-slate-950 p-4 font-mono text-sm text-slate-200">
-      <p className="mb-2 pr-24 text-xs text-slate-500">Paste this snippet into the &lt;head&gt; of your website</p>
+      <p className="mb-2 pr-24 text-xs text-slate-500">{label ?? 'Paste this snippet into the <head> of your website'}</p>
       <pre className="max-w-full overflow-x-auto whitespace-pre"><code>{snippet}</code></pre>
       <button
         type="button"
