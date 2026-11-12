@@ -93,6 +93,7 @@ params:
     subtitle: "One line in the head of your site, and you're done. No plugins, no cookies, no build step."
     snippet: '<script defer src="https://cdn.analiza.dev/analiza.js" tenant="YOUR-SITE-ID"></script>'
     platforms: "Works with WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or any HTML site."
+    note: "Clicks on links are tracked automatically: outbound links and file downloads are recorded without query strings or hashes, and mailto:/tel: only as the scheme. Add data-analiza-click=\"goal-name\" to any element (including buttons) to track a named click goal, or data-analiza-click=\"off\" to opt out a whole subtree."
     cta:
       text: "Add your site"
       url: "https://app.analiza.dev"
@@ -151,7 +152,7 @@ params:
       - question: "Do I need a cookie banner?"
         answer: "Not for Analiza. The tracker sets no cookies and stores nothing in the browser, so the analytics itself does not require a consent banner. Your site may still need one for other services you use — consult your own legal advice for your specific case."
       - question: "What data does the tracker collect?"
-        answer: "Only four things per event: the page URL, the referrer (document.referrer), your site id, and the event type (page view or page hidden). The script is about 60 lines, about 1 KB minified, and contains no fingerprinting code. You can read the full source on GitHub."
+        answer: "Only a few things per event: the page URL, the referrer (document.referrer), your site id, and the event type (page view, page hidden, or click). For link clicks we additionally send a click name (via data-analiza-click) and the link target reduced to scheme://host/path without query or hash (mailto:/tel: as scheme only). The script is about 110 lines, under 2 KB minified, and contains no fingerprinting code. You can read the full source on GitHub."
       - question: "How do I install Analiza?"
         answer: "Add one script tag to the head of your site (see the install snippet above) with your site id. It works with any site — WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or plain HTML. No plugins, no build step."
       - question: "Does it work with single-page apps (SPAs)?"

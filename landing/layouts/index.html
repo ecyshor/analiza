@@ -90,6 +90,7 @@
             <div class="install-box">
                 <pre class="install-snippet"><code>{{ .Site.Params.install.snippet | htmlEscape | safeHTML }}</code></pre>
                 <p class="install-platforms">{{ .Site.Params.install.platforms }}</p>
+                <p class="install-note">{{ .Site.Params.install.note }}</p>
                 <a href="{{ .Site.Params.install.cta.url }}" class="btn btn-primary">{{ .Site.Params.install.cta.text }}</a>
             </div>
         </div>
