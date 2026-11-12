@@ -378,6 +378,12 @@ h1, h2, h3, h4 {
     margin-bottom: 1.25rem;
 }
 
+.install-note {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: -0.75rem 0 1.25rem;
+}
+
 /* Features */
 .features {
     padding: var(--space-lg) 0;

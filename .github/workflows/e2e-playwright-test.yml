@@ -67,17 +67,24 @@ jobs:
     - name: Send test event
       run: |
         curl -X POST -H "Content-Type: application/json" -H "Host: api.dev.analiza.lan" -H "Origin: https://test.analiza.lan" -d '{"t":"view","p":"/","u":"123e4567-e89b-12d3-a456-426614174000","r":"https://example.com"}' http://localhost:8080/eye
+        curl -X POST -H "Content-Type: application/json" -H "Host: api.dev.analiza.lan" -H "Origin: https://test.analiza.lan" -d '{"t":"click","p":"/","u":"123e4567-e89b-12d3-a456-426614174000","r":"","n":"signup-cta","h":""}' http://localhost:8080/eye
 
     - name: Verify event in ClickHouse
       run: |
         sleep 5 # Wait for the event to be processed
         RESULT=$(docker compose $COMPOSE_ARGS exec -T clickhouse clickhouse-client -u eye_admin --password eye_super_duper_password -q "SELECT count() FROM eye.events WHERE tenant_id = '${{ steps.tenant.outputs.id }}'")
-        if [ "$RESULT" -ne 1 ]; then
-          echo "Event not found in ClickHouse"
+        if [ "$RESULT" -ne 2 ]; then
+          echo "Events not found in ClickHouse (expected 2, got $RESULT)"
           docker compose $COMPOSE_ARGS logs eye
           exit 1
         fi
-        echo "Event found in ClickHouse"
+        CLICKS=$(docker compose $COMPOSE_ARGS exec -T clickhouse clickhouse-client -u eye_admin --password eye_super_duper_password -q "SELECT count() FROM eye.events WHERE tenant_id = '${{ steps.tenant.outputs.id }}' AND type = 'click' AND click_name = 'signup-cta'")
+        if [ "$CLICKS" -ne 1 ]; then
+          echo "Click event not found in ClickHouse"
+          docker compose $COMPOSE_ARGS logs eye
+          exit 1
+        fi
+        echo "Events found in ClickHouse"
 
     - name: Stop services
       if: always()

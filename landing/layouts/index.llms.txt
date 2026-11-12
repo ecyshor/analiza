@@ -12,6 +12,6 @@
 - [Self-hosting / source](https://github.com/ecyshor/analiza#readme): the whole stack (tracker, API, storage, dashboards) is open source and runs locally with Docker Compose (`make start`); the tracker's `hostname` attribute points it at your own API endpoint.
 - [Pricing]({{ .Site.BaseURL }}#pricing): Free €0 up to 100k events/year (no credit card to sign up; payment details only requested near the free limit), Standard €9/year up to 1M events/year, Scale €7 per additional million events.
 - [FAQ]({{ .Site.BaseURL }}#faq): what Analiza is, where data is stored, what the tracker collects, pricing, data export, and self-hosting.
-- [Install]({{ .Site.BaseURL }}#install): one script tag in the head of any site (WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, plain HTML); SPA navigations (history.pushState/popstate) are tracked automatically.
-- [Tracker source on GitHub](https://github.com/ecyshor/analiza/blob/main/tracker/analiza.js): ~60 lines, about 1 KB minified; sends only the page URL, document.referrer, site id and event type. No cookies, no fingerprinting.
+- [Install]({{ .Site.BaseURL }}#install): one script tag in the head of any site (WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, plain HTML); SPA navigations (history.pushState/popstate) and clicks on links are tracked automatically.
+- [Tracker source on GitHub](https://github.com/ecyshor/analiza/blob/main/tracker/analiza.js): ~110 lines, under 2 KB minified; sends only the page URL, document.referrer, site id and event type. No cookies, no fingerprinting.
 - [Full LLM-friendly overview]({{ .Site.BaseURL }}llms-full.txt): complete product description, features, pricing, install snippet and FAQ.

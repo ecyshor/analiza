@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/google/uuid"
@@ -27,14 +28,17 @@ func (e UserEventType) String() string {
 		return "view"
 	case Gone:
 		return "gone"
+	case Click:
+		return "click"
 	default:
 		return fmt.Sprintf("%s", string(e))
 	}
 }
 
 const (
-	View UserEventType = "view"
-	Gone UserEventType = "gone"
+	View  UserEventType = "view"
+	Gone  UserEventType = "gone"
+	Click UserEventType = "click"
 )
 
 // maxEventBodyBytes caps the /eye request body (64 KiB).
@@ -48,6 +52,8 @@ type UserEvent struct {
 	Path      string        `json:"p"`
 	Tenant    uuid.UUID     `json:"u"`
 	Referral  string        `json:"r"`
+	Name      string        `json:"n"`
+	Target    string        `json:"h"`
 }
 
 type Event struct {
@@ -65,6 +71,8 @@ type Event struct {
 	UserCountry    string    `json:"user_country"`
 	InsertTime     time.Time `json:"insert_time"`
 	Path           string    `json:"path"`
+	ClickName      string    `json:"click_name"`
+	ClickTarget    string    `json:"click_target"`
 }
 
 type Server struct {
@@ -205,12 +213,29 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 		http.Error(w, "Invalid JSON request body", http.StatusBadRequest)
 		return
 	}
+	// Validate the event type before doing any work or enqueueing: an unknown
+	// type would fail the Enum8 insert and drop the whole ClickHouse batch.
+	switch userEvent.EventType {
+	case View, Gone, Click:
+	default:
+		http.Error(w, "Unknown event type", http.StatusBadRequest)
+		return
+	}
 	var event Event
 	event.Domain = strings.TrimPrefix(strings.TrimPrefix(request.Header.Get("Origin"), "http://"), "https://")
 
 	event.Tenant = userEvent.Tenant
 	event.EventType = userEvent.EventType
 	event.Referral = userEvent.Referral
+
+	if userEvent.EventType == Click {
+		event.ClickName = sanitizeClickName(userEvent.Name)
+		event.ClickTarget = sanitizeClickTarget(userEvent.Target)
+		if event.ClickName == "" && event.ClickTarget == "" {
+			http.Error(w, "Click event without name or target", http.StatusBadRequest)
+			return
+		}
+	}
 
 	path, utm, ok := parsePageUrl(userEvent.Path)
 	if ok {
@@ -287,6 +312,45 @@ func parsePageUrl(raw string) (path string, utm utmParams, ok bool) {
 	}, true
 }
 
+// truncateRunes cuts s to at most max runes (never splits a multi-byte rune).
+func truncateRunes(s string, max int) string {
+	if utf8.RuneCountInString(s) <= max {
+		return s
+	}
+	return string([]rune(s)[:max])
+}
+
+// sanitizeClickName trims the click name and truncates it to 128 runes.
+func sanitizeClickName(name string) string {
+	return truncateRunes(strings.TrimSpace(name), 128)
+}
+
+// sanitizeClickTarget reduces a click target URL to what we store: mailto:/tel:
+// keep only the scheme (never the address), http(s) URLs keep scheme://host +
+// path with query and fragment stripped (truncated to 512 runes), anything
+// else (javascript:, data:, relative or unparseable) is dropped.
+func sanitizeClickTarget(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return ""
+	}
+	u, err := url.Parse(raw)
+	if err != nil {
+		return ""
+	}
+	switch u.Scheme {
+	case "mailto", "tel":
+		return u.Scheme + ":"
+	case "http", "https":
+		if u.Host == "" {
+			return ""
+		}
+		return truncateRunes(u.Scheme+"://"+u.Host+u.Path, 512)
+	default:
+		return ""
+	}
+}
+
 func (s *Server) batchInsertRows(eventChan <-chan Event, checker *DomainChecker) {
 	var rows []Event
 
@@ -333,7 +397,7 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 			user_agent_table ,
 			user_agent_desktop ,
 			user_country,
-            insert_time, path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,?, ?)`)
+            insert_time, path, click_name, click_target) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,?, ? ,?, ?)`)
 	if err != nil {
 		log.Printf("Error getting ClickHouse batch: %s", err)
 	}
@@ -361,6 +425,8 @@ func insertRows(conn clickhouse.Conn, rows []Event) {
 			event.UserCountry,
 			event.InsertTime,
 			event.Path,
+			event.ClickName,
+			event.ClickTarget,
 		)
 		if err != nil {
 			log.Printf("Failed to append batch: %s", err)
@@ -386,7 +452,7 @@ func initTables(c clickhouse.Conn) {
 		    tenant_id UUID,
 		    domain String,
 			user_id String,
-			type Enum8('view' = 1, 'gone' = 2),
+			type Enum8('view' = 1, 'gone' = 2, 'click' = 3),
 			referral String,
 			utm_source String,
 			utm_medium String,
@@ -404,9 +470,12 @@ func initTables(c clickhouse.Conn) {
 			user_agent_desktop BOOLEAN,
 			insert_time DateTime,
 			path String,
-			user_country String
+			user_country String,
+			click_name String,
+			click_target String
 		) ENGINE = MergeTree
 		ORDER BY (tenant_id, domain, insert_time);
+		ALTER TABLE events MODIFY COLUMN type Enum8('view' = 1, 'gone' = 2, 'click' = 3);
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_name String;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_version String;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_os String;
@@ -417,6 +486,8 @@ func initTables(c clickhouse.Conn) {
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_table BOOLEAN;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_agent_desktop BOOLEAN;
 		ALTER TABLE events ADD COLUMN IF NOT EXISTS user_country String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS click_name String;
+		ALTER TABLE events ADD COLUMN IF NOT EXISTS click_target String;
 	`
 	statements := strings.Split(createTable, ";")
 
