@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Private support by email
+    url: mailto:support@analiza.dev
+    about: For billing, account or anything you don't want to post publicly.

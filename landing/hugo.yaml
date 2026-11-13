@@ -171,6 +171,8 @@ params:
     socials:
       - platform: "GitHub"
         url: "https://github.com/ecyshor/analiza"
+      - platform: "Support"
+        url: "https://github.com/ecyshor/analiza/issues/new?template=support.yml"
       - platform: "App"
         url: "https://app.analiza.dev"
       - platform: "Email"

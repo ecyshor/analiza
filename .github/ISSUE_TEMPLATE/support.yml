@@ -1,0 +1,94 @@
+name: Support request
+description: Get help with the hosted analiza.dev service or a self-hosted install
+title: "[Support] "
+labels: ["support"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reaching out! Please fill in the form below.
+
+        **Issues are public.** Do not paste passwords, tokens, API keys or any personal data here. For anything private (billing, your account email, ...) write to support@analiza.dev instead.
+  - type: dropdown
+    id: setup
+    attributes:
+      label: Which setup are you using?
+      options:
+        - Hosted (app.analiza.dev)
+        - Self-hosted
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: What is this about?
+      options:
+        - Installing the tracker snippet
+        - Data missing or looks wrong
+        - Dashboard
+        - Domains
+        - Data export
+        - Account or login
+        - Billing or plan
+        - Self-hosting / deployment
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: website
+    attributes:
+      label: Website domain
+      description: The domain you are tracking, e.g. example.com
+      placeholder: example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What were you trying to do, and what went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: false
+  - type: input
+    id: platform
+    attributes:
+      label: Site platform or framework
+      description: e.g. WordPress, Shopify, Next.js, plain HTML
+    validations:
+      required: false
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: e.g. Firefox 132 on macOS, Safari on iPhone
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Errors, console output or screenshots
+      description: Browser console / network errors, or `docker compose logs` output for self-hosted. Remove secrets first. You can also attach screenshots below.
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+    validations:
+      required: false
