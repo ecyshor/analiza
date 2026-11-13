@@ -1,10 +1,12 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Outlet, NavLink as RouterNavLink } from 'react-router-dom'
-import { LayoutDashboard, Globe, Download, LogOut } from 'lucide-react'
+import { LayoutDashboard, Globe, Download, LogOut, LifeBuoy } from 'lucide-react'
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
 import { Logo } from './Logo'
 import { InstallAppButton } from './InstallAppButton'
+
+const SUPPORT_URL = 'https://github.com/ecyshor/analiza/issues/new?template=support.yml'
 
 export function Layout() {
   const { logout, user } = useAuth0()
@@ -50,6 +52,15 @@ export function Layout() {
               <p className="truncate text-xs text-slate-500">{user?.email}</p>
             </div>
           </div>
+          <a
+            href={SUPPORT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-white/5 hover:text-slate-100"
+          >
+            <LifeBuoy size={16} />
+            Support
+          </a>
           <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
@@ -68,6 +79,16 @@ export function Layout() {
           <MobileNavLink to="/domains" icon={<Globe size={16} />} label="Domains" />
           <MobileNavLink to="/export" icon={<Download size={16} />} label="Export" />
           <InstallAppButton variant="icon" />
+          <a
+            href={SUPPORT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Support"
+            title="Support"
+            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-slate-100"
+          >
+            <LifeBuoy size={16} />
+          </a>
           <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
             aria-label="Sign out"

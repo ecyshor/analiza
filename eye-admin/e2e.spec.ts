@@ -59,3 +59,13 @@ test('Export page opens from nav and validates the email inline', async ({ page 
   await page.getByRole('button', { name: 'Request export' }).click();
   await expect(page.getByText('Export requested.')).toBeVisible();
 });
+
+test('Layout shows a Support link to the prefilled GitHub issue form', async ({ page }) => {
+  // Mock auth is on, so loading the app lands directly in the layout.
+  await page.goto('/');
+
+  const support = page.getByRole('link', { name: 'Support' });
+  await expect(support).toBeVisible();
+  await expect(support).toHaveAttribute('href', 'https://github.com/ecyshor/analiza/issues/new?template=support.yml');
+  await expect(support).toHaveAttribute('target', '_blank');
+});
