@@ -93,7 +93,7 @@ params:
     subtitle: "One line in the head of your site, and you're done. No plugins, no cookies, no build step."
     snippet: '<script defer src="https://cdn.analiza.dev/analiza.js" tenant="YOUR-SITE-ID"></script>'
     platforms: "Works with WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or any HTML site."
-    note: "Clicks on links are tracked automatically: outbound links and file downloads are recorded without query strings or hashes, and mailto:/tel: only as the scheme. Add data-analiza-click=\"goal-name\" to any element (including buttons) to track a named click goal, or data-analiza-click=\"off\" to opt out a whole subtree."
+    note: "Page views, outbound links and downloads are tracked automatically. Mark your own buttons with data-analiza-click=\"name\" to track them as goals. See Tracking in the app."
     cta:
       text: "Add your site"
       url: "https://app.analiza.dev"

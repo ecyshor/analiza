@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { AlertCircle, Code, Globe, Trash2 } from 'lucide-react'
 import type { Domain } from '../api'
 import { AddDomainForm } from '../components/AddDomainForm'
@@ -145,6 +146,14 @@ export function Domains() {
                           <div className="min-w-0 max-w-full space-y-4">
                             <SnippetBlock tenantId={domain.tenant_id} />
                             <InstallGuide tenantId={domain.tenant_id} />
+                            <p className="text-sm">
+                              <Link
+                                to="/tracking"
+                                className="text-violet-400 underline-offset-2 transition-colors hover:text-violet-300 hover:underline"
+                              >
+                                What gets tracked &amp; click goals →
+                              </Link>
+                            </p>
                           </div>
                         </td>
                       </tr>
