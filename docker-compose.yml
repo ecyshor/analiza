@@ -16,8 +16,16 @@ services:
       - "--entrypoints.web.forwardedHeaders.trustedIPs=10.0.0.0/16"
       - "--entrypoints.web.proxyProtocol=true"
       - "--entrypoints.web.proxyProtocol.trustedIPs=10.0.0.0/16"
+      # Prometheus metrics on their own entrypoint, published on the host's
+      # loopback only so the host Alloy agent can scrape them; no router
+      # serves this entrypoint publicly.
+      - "--entrypoints.metrics.address=:8082"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.entrypoint=metrics"
+      - "--metrics.prometheus.addrouterslabels=true"
     ports:
       - "${ANALIZA_HTTP_BIND:-0.0.0.0}:8080:80"
+      - "127.0.0.1:8082:8082"
     networks:
       - default
       - socket-proxy
