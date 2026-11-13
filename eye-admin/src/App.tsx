@@ -4,6 +4,7 @@ import { Auth0Provider, useAuth0 } from '@auth0/auth0-react'
 import { Layout } from './components/Layout'
 import { Dashboard } from './pages/Dashboard'
 import { Domains } from './pages/Domains'
+import { Tracking } from './pages/Tracking'
 import { Export } from './pages/Export'
 import { Login } from './pages/Login'
 import { AuthCallback } from './pages/AuthCallback'
@@ -79,6 +80,7 @@ function AppRoutes() {
 			>
 				<Route index element={<Dashboard />} />
 				<Route path="domains" element={<Domains />} />
+				<Route path="tracking" element={<Tracking />} />
 				<Route path="export" element={<Export />} />
 			</Route>
 			<Route path="/auth-callback" element={<AuthCallback />} />
