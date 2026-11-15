@@ -197,7 +197,7 @@ func TestHandleEyeClickEventEnqueuedWithSanitizedFields(t *testing.T) {
 	s := newTestServer(10)
 
 	body := `{"t":"click","p":"https://example.com/pricing","u":"123e4567-e89b-12d3-a456-426614174000","r":"",` +
-		`"n":"  signup-cta  ","h":"https://external.example/landing?token=secret#top"}`
+		`"n":"  signup-cta  ","h":"https://external.example/landing?utm=a#top"}`
 	rec := doEyeRequest(s, http.MethodPost, body)
 	require.Equal(t, http.StatusOK, rec.Code)
 	require.Len(t, s.events, 1)
@@ -255,7 +255,17 @@ func TestSanitizeClickTarget(t *testing.T) {
 		{"empty", "", ""},
 		{"whitespace only", "   ", ""},
 		{"http url with query and hash stripped", "http://other.example/page?a=1&b=2#frag", "http://other.example/page"},
-		{"https download keeps origin and path only", "https://cdn.example.com/files/report.pdf?token=abc", "https://cdn.example.com/files/report.pdf"},
+		{"https download keeps origin and path only", "https://cdn.example.com/files/report.pdf?v=2", "https://cdn.example.com/files/report.pdf"},
+		{"token param drops the link", "https://cdn.example.com/files/report.pdf?token=abc", ""},
+		{"signature param drops the link", "https://other.example/x?X-Amz-Signature=abc", ""},
+		{"api_key param drops the link", "https://other.example/x?api_key=1", ""},
+		{"token-like value drops the link", "https://other.example/x?ref=a1b2c3d4e5f6a7b8c9", ""},
+		{"token in fragment drops the link", "https://other.example/cb#access_token=abc", ""},
+		{"token-like path segment drops the link", "https://other.example/invite/9fG3kLm2Qx8vTz4Wn1", ""},
+		{"uuid path segment drops the link", "https://other.example/doc/123e4567-e89b-12d3-a456-426614174000", ""},
+		{"jwt path segment drops the link", "https://other.example/x/eyJhbGciOiJIUzI1NiJ9.e30.abc", ""},
+		{"userinfo drops the link", "https://user:pw@other.example/x", ""},
+		{"plain slug is kept", "https://other.example/blog/my-long-article-title-2024", "https://other.example/blog/my-long-article-title-2024"},
 		{"https url without path", "https://other.example", "https://other.example"},
 		{"host with port is kept", "https://other.example:8443/x?y=1", "https://other.example:8443/x"},
 		{"mailto keeps scheme only", "mailto:someone@example.com?subject=hi", "mailto:"},
