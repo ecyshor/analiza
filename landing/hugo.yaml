@@ -84,7 +84,7 @@ params:
 
   dashboard:
     title: "See it in action."
-    subtitle: "A live demo with sample traffic, plus this website's real visitor count."
+    subtitle: "A live demo of the dashboard, plus this website's real visitor count."
     # Crawlers can't read the iframe, so this text describes what the dashboard shows.
     description: "The embedded dashboard below shows what Analiza reports: unique visitors and page views over time, top pages and entry pages, top sources (referrers) and UTM campaigns, visitor countries, devices, browsers and operating systems, and session stats such as bounce rate, views per session and median session duration."
 
