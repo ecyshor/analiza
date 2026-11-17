@@ -7,27 +7,7 @@
 </div>
 
 <!-- Navbar -->
-<nav class="navbar">
-    <div class="container navbar-container">
-        <a href="/" class="brand">
-            {{ if .Site.Params.navbar.logoImage }}
-            <img src="{{ printf "/images/%s" .Site.Params.navbar.logoImage | relURL }}" alt="Analiza logo" width="40" height="40" class="logo-img">
-            <span class="brand-name">{{ .Site.Params.navbar.logoText }}</span>
-            {{ else }}
-            {{ .Site.Params.navbar.logoText }}
-            {{ end }}
-        </a>
-        <div class="nav-links">
-            <a href="#dashboard" class="nav-link nav-anchor" data-analiza-click="nav-live-demo">Live demo</a>
-            <a href="#features" class="nav-link nav-anchor">Features</a>
-            <a href="#pricing" class="nav-link nav-anchor">Pricing</a>
-            <a href="#faq" class="nav-link nav-anchor">FAQ</a>
-            {{ range .Site.Params.navbar.links }}
-            <a href="{{ .url }}" class="nav-link nav-cta" data-analiza-click="nav-{{ .title | urlize }}">{{ .title }}</a>
-            {{ end }}
-        </div>
-    </div>
-</nav>
+{{ partial "nav.html" . }}
 
 <main>
     <!-- Hero Section -->
@@ -182,15 +162,6 @@
     </section>
 </main>
 
-<footer class="footer">
-    <div class="container footer-container">
-        <div class="copyright">&copy; {{ now.Year }} {{ .Site.Params.footer.copyright }}</div>
-        <div class="socials">
-            {{ range .Site.Params.footer.socials }}
-            <a href="{{ .url }}"{{ if strings.HasPrefix .url "http" }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .platform }}</a>
-            {{ end }}
-        </div>
-    </div>
-</footer>
+{{ partial "footer.html" . }}
 
 {{ end }}
