@@ -1,0 +1,28 @@
+{{ define "main" }}
+
+<!-- Background Glow Elements -->
+<div class="bg-glows" aria-hidden="true">
+    <div class="bg-glow top-glow"></div>
+</div>
+
+{{ partial "nav.html" . }}
+
+<main>
+    <section class="prose container">
+        {{ partial "breadcrumb.html" . }}
+        <h1>{{ .Title }}</h1>
+        {{ .Content }}
+        <ul class="guide-list">
+            {{ range sort .Pages "Weight" }}
+            <li>
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                <p>{{ .Description }}</p>
+            </li>
+            {{ end }}
+        </ul>
+    </section>
+</main>
+
+{{ partial "footer.html" . }}
+
+{{ end }}

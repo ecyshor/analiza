@@ -50,4 +50,25 @@ Allow: /
 User-agent: meta-externalagent
 Allow: /
 
+User-agent: Google-CloudVertexBot
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
 Sitemap: https://analiza.dev/sitemap.xml
