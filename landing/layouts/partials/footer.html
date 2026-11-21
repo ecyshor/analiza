@@ -1,0 +1,18 @@
+<footer class="footer">
+    <div class="container">
+        <!-- Crawlable links to every guide, so search and AI crawlers find them from any page -->
+        <nav class="footer-guides" aria-label="Guides">
+            {{ range sort .Site.RegularPages "Weight" }}
+            <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+            {{ end }}
+        </nav>
+        <div class="footer-container">
+            <div class="copyright">&copy; {{ now.Year }} {{ .Site.Params.footer.copyright }}</div>
+            <div class="socials">
+                {{ range .Site.Params.footer.socials }}
+                <a href="{{ .url }}"{{ if strings.HasPrefix .url "http" }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .platform }}</a>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</footer>

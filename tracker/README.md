@@ -17,6 +17,7 @@ Client-side analytics event sender for websites.
 ## Click tracking
 Clicks (including middle/auxiliary clicks) on links are tracked automatically:
 - Outbound links and file downloads (pdf, zip, docx, mp3, ...) are recorded as `scheme://host/path` — query strings and hashes are never sent.
+- Links that appear to contain a token or credential (userinfo, parameters such as `token`/`key`/`sig`/`code`/`session`, or token-looking values or path segments like UUIDs, JWTs, long random IDs) are not recorded at all. The server applies the same check.
 - `mailto:` / `tel:` links are recorded as the scheme only ("mailto:" / "tel:"), never the address.
 - Internal links are not recorded as targets.
 - Add `data-analiza-click="name"` to any element (including buttons) to record a named click/goal.

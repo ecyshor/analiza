@@ -1,0 +1,26 @@
+{{ define "main" }}
+
+<!-- Background Glow Elements -->
+<div class="bg-glows" aria-hidden="true">
+    <div class="bg-glow top-glow"></div>
+</div>
+
+{{ partial "nav.html" . }}
+
+<main>
+    <article class="prose container">
+        {{ partial "breadcrumb.html" . }}
+        <h1>{{ .Title }}</h1>
+        <p class="prose-meta">Last updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2 January 2006" }}</time>{{ with .OutputFormats.Get "markdown" }} · <a href="{{ .RelPermalink }}">View as Markdown</a>{{ end }}</p>
+        {{ .Content }}
+
+        <aside class="prose-cta">
+            <p><strong>Try Analiza for free.</strong> Up to 100k events a year, no credit card needed. EU hosted, no cookies, open source.</p>
+            <a href="https://app.analiza.dev" class="btn btn-primary" data-analiza-click="guide-signup">Start for free</a>
+        </aside>
+    </article>
+</main>
+
+{{ partial "footer.html" . }}
+
+{{ end }}

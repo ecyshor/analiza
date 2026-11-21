@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Outlet, NavLink as RouterNavLink } from 'react-router-dom'
-import { LayoutDashboard, Globe, Download, LogOut, LifeBuoy } from 'lucide-react'
+import { LayoutDashboard, Globe, MousePointerClick, Download, LogOut, LifeBuoy } from 'lucide-react'
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
 import { Logo } from './Logo'
@@ -15,6 +15,7 @@ export function Layout() {
     <>
       <SidebarLink to="/" end icon={<LayoutDashboard size={18} />} label="Dashboard" />
       <SidebarLink to="/domains" icon={<Globe size={18} />} label="Domains" />
+      <SidebarLink to="/tracking" icon={<MousePointerClick size={18} />} label="Tracking" />
       <SidebarLink to="/export" icon={<Download size={18} />} label="Export" />
     </>
   )
@@ -77,6 +78,7 @@ export function Layout() {
         <div className="flex min-w-0 items-center gap-1">
           <MobileNavLink to="/" end icon={<LayoutDashboard size={16} />} label="Dashboard" />
           <MobileNavLink to="/domains" icon={<Globe size={16} />} label="Domains" />
+          <MobileNavLink to="/tracking" icon={<MousePointerClick size={16} />} label="Tracking" />
           <MobileNavLink to="/export" icon={<Download size={16} />} label="Export" />
           <InstallAppButton variant="icon" />
           <a

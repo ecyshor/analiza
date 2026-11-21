@@ -592,6 +592,161 @@ h1, h2, h3, h4 {
     color: var(--text-primary);
 }
 
+/* Guides links in the footer */
+.footer-guides {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.footer-guides a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.footer-guides a:hover {
+    color: var(--text-primary);
+}
+
+/* Docs and guide pages */
+.prose {
+    max-width: 760px;
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-lg);
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.prose h1 {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin: 0.5rem 0 0.75rem;
+}
+
+.prose h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin: 2.5rem 0 0.75rem;
+}
+
+.prose h3 {
+    color: var(--text-primary);
+    margin: 1.75rem 0 0.5rem;
+}
+
+.prose p, .prose ul, .prose ol, .prose table, .prose pre {
+    margin-bottom: 1.1rem;
+}
+
+.prose ul, .prose ol {
+    padding-left: 1.5rem;
+}
+
+.prose a {
+    color: var(--accent-violet);
+}
+
+.prose strong {
+    color: var(--text-primary);
+}
+
+.prose code {
+    font-family: monospace;
+    font-size: 0.9em;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+.prose pre {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+.prose pre code {
+    background: none;
+    padding: 0;
+}
+
+.prose table {
+    width: 100%;
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+    font-size: 0.95rem;
+}
+
+.prose th, .prose td {
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.prose th {
+    color: var(--text-primary);
+    background: var(--bg-surface);
+}
+
+.breadcrumb {
+    font-size: 0.9rem;
+}
+
+.breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--text-primary);
+}
+
+.prose-meta {
+    font-size: 0.9rem;
+}
+
+.prose-meta a {
+    color: var(--text-secondary);
+}
+
+.prose-cta {
+    margin-top: var(--space-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-surface);
+}
+
+.guide-list {
+    list-style: none;
+    padding-left: 0 !important;
+}
+
+.guide-list li {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.guide-list li a {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.guide-list li p {
+    margin: 0.25rem 0 0;
+}
+
 /* Section Anchors */
 section[id] {
     scroll-margin-top: 5rem;

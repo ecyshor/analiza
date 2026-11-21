@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -328,7 +329,9 @@ func sanitizeClickName(name string) string {
 // sanitizeClickTarget reduces a click target URL to what we store: mailto:/tel:
 // keep only the scheme (never the address), http(s) URLs keep scheme://host +
 // path with query and fragment stripped (truncated to 512 runes), anything
-// else (javascript:, data:, relative or unparseable) is dropped.
+// else (javascript:, data:, relative or unparseable) is dropped. URLs that look
+// like they carry a credential (see urlHasSecret) are dropped as well, mirroring
+// the tracker.
 func sanitizeClickTarget(raw string) string {
 	raw = strings.TrimSpace(raw)
 	if raw == "" {
@@ -342,7 +345,7 @@ func sanitizeClickTarget(raw string) string {
 	case "mailto", "tel":
 		return u.Scheme + ":"
 	case "http", "https":
-		if u.Host == "" {
+		if u.Host == "" || urlHasSecret(u) {
 			return ""
 		}
 		return truncateRunes(u.Scheme+"://"+u.Host+u.Path, 512)
@@ -373,6 +376,45 @@ func sanitizeReferral(raw string) string {
 	default:
 		return ""
 	}
+}
+
+var (
+	sensitiveKeyRe = regexp.MustCompile(`(?i)token|secret|passw|pwd|auth|bearer|jwt|session|sig(nature)?$|^sid$|key|code|otp|nonce|ticket|credential|magic|reset|invite|verify`)
+	tokenLikeRe    = regexp.MustCompile(`(?i)[a-z0-9]{16,}|^eyJ|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)
+	digitRe        = regexp.MustCompile(`\d`)
+)
+
+// looksLikeToken reports whether v contains an opaque identifier: a JWT, a
+// UUID or a 16+ character alphanumeric run that includes a digit.
+func looksLikeToken(v string) bool {
+	m := tokenLikeRe.FindString(v)
+	return m != "" && (digitRe.MatchString(m) || strings.HasPrefix(m, "eyJ"))
+}
+
+// urlHasSecret reports whether u carries userinfo, a secret-looking query or
+// fragment parameter, or a token-looking value or path segment.
+func urlHasSecret(u *url.URL) bool {
+	if u.User != nil {
+		return true
+	}
+	for _, seg := range strings.Split(u.Path, "/") {
+		if looksLikeToken(seg) {
+			return true
+		}
+	}
+	frag := u.Fragment
+	if i := strings.Index(frag, "?"); i >= 0 {
+		frag = frag[i+1:]
+	}
+	for _, params := range []string{u.RawQuery, frag} {
+		for _, pair := range strings.FieldsFunc(params, func(r rune) bool { return r == '&' || r == ';' }) {
+			k, v, hasValue := strings.Cut(pair, "=")
+			if sensitiveKeyRe.MatchString(k) || looksLikeToken(v) || (!hasValue && looksLikeToken(k)) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (s *Server) batchInsertRows(eventChan <-chan Event, checker *DomainChecker) {

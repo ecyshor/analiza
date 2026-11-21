@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import type { Domain } from '../api'
 import { useAddDomain } from '../hooks/domains'
 import { AddDomainForm } from './AddDomainForm'
@@ -56,6 +57,14 @@ export function GettingStarted({ domains, showAddForm = true }: { domains: Domai
               </p>
               <SnippetBlock tenantId={firstDomain.tenant_id} />
               <InstallGuide tenantId={firstDomain.tenant_id} />
+              <p className="text-sm">
+                <Link
+                  to="/tracking"
+                  className="text-violet-400 underline-offset-2 transition-colors hover:text-violet-300 hover:underline"
+                >
+                  What gets tracked &amp; click goals →
+                </Link>
+              </p>
             </div>
           ) : (
             <p className="text-sm text-slate-500">

@@ -30,10 +30,44 @@
 
     const downloadExtension = /\.(pdf|zip|gz|tar|dmg|exe|msi|pkg|deb|rpm|apk|csv|txt|docx?|xlsx?|pptx?|odt|ods|mp3|mp4|mov|avi|epub)$/i;
 
+    // Links that look like they carry a credential (userinfo, a secret-ish
+    // query/hash parameter, or a token-looking value or path segment) are never
+    // reported, not even as origin + path. Mirrored by sanitizeClickTarget in eye.
+    const sensitiveKey = /token|secret|passw|pwd|auth|bearer|jwt|session|sig(nature)?$|^sid$|key|code|otp|nonce|ticket|credential|magic|reset|invite|verify/i;
+    const tokenLike = /[A-Za-z0-9]{16,}|^eyJ|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+    function looksLikeToken(v) {
+        const m = tokenLike.exec(v);
+        return m !== null && (/\d/.test(m[0]) || /^eyJ/.test(m[0]));
+    }
+
+    function hasSecret(url) {
+        if (url.username || url.password) {
+            return true;
+        }
+        for (const seg of url.pathname.split("/")) {
+            let s = seg;
+            try { s = decodeURIComponent(seg); } catch { /* keep raw */ }
+            if (looksLikeToken(s)) {
+                return true;
+            }
+        }
+        const params = [url.search, url.hash.replace(/^#[^=&]*\?/, "&")].join("&");
+        for (const pair of params.replace(/^[?#]/, "").split(/[&;]/)) {
+            const i = pair.indexOf("=");
+            const k = i < 0 ? pair : pair.slice(0, i);
+            const v = i < 0 ? "" : pair.slice(i + 1);
+            if (sensitiveKey.test(k) || looksLikeToken(v) || (i < 0 && looksLikeToken(k))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // clickTarget reduces an <a href> target to what we are willing to send:
     // mailto:/tel: keep only the scheme, outbound http(s) links and file
     // downloads keep origin + path (never query or hash), internal links
-    // send nothing.
+    // send nothing, and links that appear to contain a token send nothing.
     function clickTarget(el) {
         let url;
         try {
@@ -46,6 +80,9 @@
         }
         if ((url.protocol === "http:" || url.protocol === "https:") &&
             (url.host !== location.host || downloadExtension.test(url.pathname))) {
+            if (hasSecret(url)) {
+                return "";
+            }
             return url.origin + url.pathname;
         }
         return "";

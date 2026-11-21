@@ -38,7 +38,7 @@ One script tag in the head of your site:
 Single-page app navigations (history.pushState / popstate) are tracked automatically.
 
 Tracker source: https://github.com/ecyshor/analiza/blob/main/tracker/analiza.js
-(~110 lines, under 2 KB minified; sends only page URL, document.referrer (stored as its origin only), site id
+(~150 lines, about 1.3 KB gzipped; sends only page URL, document.referrer (stored as its origin only), site id
 and event type — page view / page hidden / click.)
 
 ## Pricing
@@ -61,3 +61,13 @@ No credit card or payment details are needed to create an account and start on t
 - GitHub: https://github.com/ecyshor/analiza
 - Tracker source: https://github.com/ecyshor/analiza/blob/main/tracker/analiza.js
 - Short version: {{ .Site.BaseURL }}llms.txt
+
+{{ range sort .Site.RegularPages "Weight" }}
+---
+
+# {{ .Title }}
+
+Source: {{ .Permalink }} (last updated {{ .Lastmod.Format "2006-01-02" }})
+
+{{ .RawContent }}
+{{ end }}

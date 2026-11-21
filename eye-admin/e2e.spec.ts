@@ -60,6 +60,27 @@ test('Export page opens from nav and validates the email inline', async ({ page 
   await expect(page.getByText('Export requested.')).toBeVisible();
 });
 
+test('Tracking page opens from nav and shows what is tracked plus click goals', async ({ page }) => {
+  await page.goto('/');
+
+  // Navigate to Tracking via the nav link
+  await page.getByRole('link', { name: 'Tracking' }).click();
+  await page.waitForURL('http://localhost:5174/tracking');
+  await expect(page.locator('h1:has-text("Tracking")')).toBeVisible();
+
+  // All doc sections are present
+  await expect(page.getByRole('heading', { name: 'Installing' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'What is tracked automatically' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Track your own click goals' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Excluding clicks' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Where to see it' })).toBeVisible();
+
+  // The install snippet and the data-analiza-click examples render as code
+  await expect(page.locator('code').filter({ hasText: 'cdn.analiza.dev/analiza.js' }).first()).toBeVisible();
+  await expect(page.locator('code').filter({ hasText: 'data-analiza-click="signup"' }).first()).toBeVisible();
+  await expect(page.locator('code').filter({ hasText: 'data-analiza-click="off"' }).first()).toBeVisible();
+});
+
 test('Layout shows a Support link to the prefilled GitHub issue form', async ({ page }) => {
   // Mock auth is on, so loading the app lands directly in the layout.
   await page.goto('/');

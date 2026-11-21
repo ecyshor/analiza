@@ -1,0 +1,23 @@
+{{ $home := cond .IsHome "" ("/" | relURL) }}
+<nav class="navbar">
+    <div class="container navbar-container">
+        <a href="{{ "/" | relURL }}" class="brand">
+            {{ if .Site.Params.navbar.logoImage }}
+            <img src="{{ printf "/images/%s" .Site.Params.navbar.logoImage | relURL }}" alt="Analiza logo" width="40" height="40" class="logo-img">
+            <span class="brand-name">{{ .Site.Params.navbar.logoText }}</span>
+            {{ else }}
+            {{ .Site.Params.navbar.logoText }}
+            {{ end }}
+        </a>
+        <div class="nav-links">
+            <a href="{{ $home }}#dashboard" class="nav-link nav-anchor" data-analiza-click="nav-live-demo">Live demo</a>
+            <a href="{{ $home }}#features" class="nav-link nav-anchor">Features</a>
+            <a href="{{ $home }}#pricing" class="nav-link nav-anchor">Pricing</a>
+            <a href="{{ $home }}#faq" class="nav-link nav-anchor">FAQ</a>
+            <a href="{{ "/docs/" | relURL }}" class="nav-link nav-anchor">Docs</a>
+            {{ range .Site.Params.navbar.links }}
+            <a href="{{ .url }}" class="nav-link nav-cta" data-analiza-click="nav-{{ .title | urlize }}">{{ .title }}</a>
+            {{ end }}
+        </div>
+    </div>
+</nav>

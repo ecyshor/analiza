@@ -24,9 +24,20 @@ outputFormats:
     mediaType: text/plain
     isPlainText: true
     baseName: llms-full
+  # Every content page is also served as raw markdown at <page>/index.md for LLM fetchers.
+  markdown:
+    mediaType: text/markdown
+    isPlainText: true
+    baseName: index
+    permalinkable: false
 
 outputs:
   home: [html, llms, llmsfull]
+  page: [html, markdown]
+  section: [html]
+
+frontmatter:
+  lastmod: [lastmod, ":git", ":fileModTime"]
 
 markup:
   goldmark:
@@ -84,7 +95,7 @@ params:
 
   dashboard:
     title: "See it in action."
-    subtitle: "A live demo with sample traffic, plus this website's real visitor count."
+    subtitle: "A live demo of the dashboard, plus this website's real visitor count."
     # Crawlers can't read the iframe, so this text describes what the dashboard shows.
     description: "The embedded dashboard below shows what Analiza reports: unique visitors and page views over time, top pages and entry pages, top sources (referrers) and UTM campaigns, visitor countries, devices, browsers and operating systems, and session stats such as bounce rate, views per session and median session duration."
 
@@ -93,7 +104,7 @@ params:
     subtitle: "One line in the head of your site, and you're done. No plugins, no cookies, no build step."
     snippet: '<script defer src="https://cdn.analiza.dev/analiza.js" tenant="YOUR-SITE-ID"></script>'
     platforms: "Works with WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or any HTML site."
-    note: "Clicks on links are tracked automatically: outbound links and file downloads are recorded without query strings or hashes, and mailto:/tel: only as the scheme. Add data-analiza-click=\"goal-name\" to any element (including buttons) to track a named click goal, or data-analiza-click=\"off\" to opt out a whole subtree."
+    note: "Page views, outbound links and downloads are tracked automatically. Mark your own buttons with data-analiza-click=\"name\" to track them as goals. See Tracking in the app."
     cta:
       text: "Add your site"
       url: "https://app.analiza.dev"
@@ -152,7 +163,7 @@ params:
       - question: "Do I need a cookie banner?"
         answer: "Not for Analiza. The tracker sets no cookies and stores nothing in the browser, so the analytics itself does not require a consent banner. Your site may still need one for other services you use — consult your own legal advice for your specific case."
       - question: "What data does the tracker collect?"
-        answer: "Only a few things per event: the page URL, the referrer (document.referrer, of which we store only the origin, never its path or query), your site id, and the event type (page view, page hidden, or click). For link clicks we additionally send a click name (via data-analiza-click) and the link target reduced to scheme://host/path without query or hash (mailto:/tel: as scheme only). The script is about 110 lines, under 2 KB minified, and contains no fingerprinting code. You can read the full source on GitHub."
+        answer: "Only a few things per event: the page URL, the referrer (document.referrer, of which we store only the origin, never its path or query), your site id, and the event type (page view, page hidden, or click). For link clicks we additionally send a click name (via data-analiza-click) and the link target reduced to scheme://host/path without query or hash (mailto:/tel: as scheme only). The script is about 150 lines, about 1.3 KB gzipped, and contains no fingerprinting code. You can read the full source on GitHub."
       - question: "How do I install Analiza?"
         answer: "Add one script tag to the head of your site (see the install snippet above) with your site id. It works with any site — WordPress, Shopify, Wix, Squarespace, Webflow, Ghost, Framer, Next.js, or plain HTML. No plugins, no build step."
       - question: "Does it work with single-page apps (SPAs)?"
@@ -164,7 +175,7 @@ params:
       - question: "Is Analiza open source? Can I self-host it?"
         answer: "Yes. The full stack — tracker, API, storage and dashboards — is open source on GitHub (https://github.com/ecyshor/analiza) and runs with Docker Compose. You can audit everything we claim, or self-host it entirely and point the tracker at your own server with the script's hostname attribute. The hosted service at analiza.dev is there if you'd rather not run it yourself."
       - question: "How is Analiza different from Google Analytics?"
-        answer: "Analiza doesn't use cookies, doesn't track users across sites or devices, and doesn't build advertising profiles. All data stays in the EU, the script is about 1 KB, your data is always exportable and the whole stack can be self-hosted, and the dashboard shows simple aggregate metrics instead of user-level reports. If you need ad measurement and personalization, Google Analytics is built for that — Analiza is the lightweight, privacy-first alternative."
+        answer: "Analiza doesn't use cookies, doesn't track users across sites or devices, and doesn't build advertising profiles. All data stays in the EU, the script is about 1.3 KB gzipped, your data is always exportable and the whole stack can be self-hosted, and the dashboard shows simple aggregate metrics instead of user-level reports. If you need ad measurement and personalization, Google Analytics is built for that — Analiza is the lightweight, privacy-first alternative."
 
   footer:
     copyright: "Analiza.dev"
