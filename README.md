@@ -11,7 +11,7 @@ Privacy-focused, low-cost website analytics. GDPR compliant, no cookies. Site ow
 - tenant id (the `tenant` attribute of the script tag) and the domain, taken from the request `Origin` header
 - event type: `view` (page visible / navigation) or `gone` (page hidden)
 - page path (trailing slash trimmed) and the `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` query parameters of the page URL
-- referrer
+- referrer, reduced to its origin (`scheme://host`); its path and query are never stored
 - browser name/version, OS and version, device, and bot/mobile/tablet/desktop flags parsed from the `User-Agent`
 - country (ISO code) resolved from the client IP with a Geo-IP database
 - insert time

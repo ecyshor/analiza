@@ -223,6 +223,19 @@ func TestHandleEyeClickWithoutAnyFieldIsRejected(t *testing.T) {
 	require.Len(t, s.events, 0, "meaningless click events must not be enqueued")
 }
 
+func TestHandleEyeStoresReferrerOriginOnly(t *testing.T) {
+	s := newTestServer(10)
+
+	body := `{"t":"view","p":"https://example.com/","u":"123e4567-e89b-12d3-a456-426614174000",` +
+		`"r":"https://example.com/reset?token=secret&email=a%40b.c#top"}`
+	rec := doEyeRequest(s, http.MethodPost, body)
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Len(t, s.events, 1)
+
+	event := <-s.events
+	require.Equal(t, "https://example.com", event.Referral)
+}
+
 func TestHandleEyeViewIgnoresClickFields(t *testing.T) {
 	s := newTestServer(10)
 
@@ -289,4 +302,32 @@ func TestSanitizeClickTarget(t *testing.T) {
 		require.Equal(t, "https://other.example/"+strings.Repeat("é", 512-len("https://other.example/")), got)
 		require.Len(t, []rune(got), 512)
 	})
+}
+
+func TestSanitizeReferral(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"empty", "", ""},
+		{"whitespace only", "   ", ""},
+		{"path, query and hash stripped", "https://example.com/reset?token=secret#top", "https://example.com"},
+		{"http keeps scheme", "http://other.example/page", "http://other.example"},
+		{"userinfo dropped", "https://user:pw@other.example/x", "https://other.example"},
+		{"port is kept", "https://other.example:8443/x?y=1", "https://other.example:8443"},
+		{"host lowercased", "https://WWW.Google.COM/search?q=x", "https://www.google.com"},
+		{"android app keeps package", "android-app://com.google.android.gm/", "android-app://com.google.android.gm"},
+		{"javascript is dropped", "javascript:alert(1)", ""},
+		{"data is dropped", "data:text/html;base64,PHNjcmlwdD4=", ""},
+		{"relative url is dropped", "/local/page?x=1", ""},
+		{"unparseable is dropped", "://missing-scheme", ""},
+		{"http without host is dropped", "http:///just-a-path", ""},
+		{"long host truncated to 255 runes", "https://" + strings.Repeat("a", 300) + ".example/", "https://" + strings.Repeat("a", 255-len("https://"))},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.want, sanitizeReferral(tt.in))
+		})
+	}
 }

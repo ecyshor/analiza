@@ -17,7 +17,7 @@ Each event is a small JSON request to `https://api.analiza.dev/eye` with these f
 | --- | --- |
 | Event type | `view` (page view), `gone` (page hidden or closed) or `click` |
 | Page URL | `location.href` of the current page |
-| Referrer | `document.referrer`, the page the visitor came from |
+| Referrer | `document.referrer`, the page the visitor came from; only its origin (`scheme://host`) is stored, never its path or query |
 | Site id | Your `tenant` id |
 | Click name | For clicks only: the `data-analiza-click` name, if any |
 | Click target | For clicks only: an outbound or download link reduced to `https://host/path`, or `mailto:` / `tel:` |
