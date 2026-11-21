@@ -38,7 +38,7 @@ One script tag in the head of your site:
 Single-page app navigations (history.pushState / popstate) are tracked automatically.
 
 Tracker source: https://github.com/ecyshor/analiza/blob/main/tracker/analiza.js
-(~110 lines, under 2 KB minified; sends only page URL, document.referrer, site id
+(~110 lines, under 2 KB minified; sends only page URL, document.referrer (stored as its origin only), site id
 and event type — page view / page hidden / click.)
 
 ## Pricing

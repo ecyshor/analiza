@@ -226,7 +226,7 @@ func (s *Server) handleEye(w http.ResponseWriter, request *http.Request) {
 
 	event.Tenant = userEvent.Tenant
 	event.EventType = userEvent.EventType
-	event.Referral = userEvent.Referral
+	event.Referral = sanitizeReferral(userEvent.Referral)
 
 	if userEvent.EventType == Click {
 		event.ClickName = sanitizeClickName(userEvent.Name)
@@ -346,6 +346,30 @@ func sanitizeClickTarget(raw string) string {
 			return ""
 		}
 		return truncateRunes(u.Scheme+"://"+u.Host+u.Path, 512)
+	default:
+		return ""
+	}
+}
+
+// sanitizeReferral reduces document.referrer to its origin: same-origin
+// referrers carry the full previous URL (path, query, possibly tokens), and
+// only the host is ever reported. http(s) keep scheme://host[:port],
+// android-app keeps the package, everything else is dropped.
+func sanitizeReferral(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return ""
+	}
+	u, err := url.Parse(raw)
+	if err != nil {
+		return ""
+	}
+	switch u.Scheme {
+	case "http", "https", "android-app":
+		if u.Host == "" {
+			return ""
+		}
+		return truncateRunes(u.Scheme+"://"+strings.ToLower(u.Host), 255)
 	default:
 		return ""
 	}
